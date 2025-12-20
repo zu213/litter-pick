@@ -1,0 +1,92 @@
+<html>
+  <head>
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+  </head>
+  <body>
+
+    <div id="map" style="height: 500px"></div>
+    <script>
+
+      const test = JSON.parse(`{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              -0.5658971524300966,
+              51.760783109833625
+            ],
+            [
+              -0.5669068685231196,
+              51.75972449191431
+            ],
+            [
+              -0.5668398975580828,
+              51.75970536003683
+            ],
+            [
+              -0.5658301814650883,
+              51.760767166976905
+            ],
+            [
+              -0.5658971524300966,
+              51.760783109833625
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      }
+    }
+  ]
+}`)
+
+      const bounds = L.latLngBounds(
+        [51.754, -0.574], // SW corner
+        [51.768, -0.560]  // NE corner
+      );
+
+      var map = L.map('map', {
+        worldCopyJump: false,
+        maxBounds: bounds,
+        maxBoundsViscosity: 1.0,
+        minZoom: 15,
+        maxZoom: 18
+      }).setView([51.7605, -0.566], 16);
+
+      map.fitBounds(bounds)
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+      
+
+var myStyle = {
+    "color": "#ff7800",
+    "weight": 5,
+    "opacity": 0.65
+};
+
+
+      console.log(L.geoJSON(test))
+      L.geoJSON(test, {
+          onEachFeature: function (feature, layer) {
+            layer.on('click', function (e) {
+              console.log('test123')
+            });
+          },
+            style: myStyle
+      }).addTo(map);
+    </script>
+  </body>
+
+</html>
