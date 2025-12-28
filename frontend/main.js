@@ -1,5 +1,6 @@
 
 const roadsJSON = await(await fetch('./geojson.json')).json()
+var selectedRoadCardElement = null
 
 // Map bounds
 const bounds = L.latLngBounds(
@@ -35,11 +36,37 @@ const roadHoverStyle = {
   opacity: 1
 };
 
+roadsJSON['features'] = roadsJSON['features'].map((feature) => {
+  if(!feature['id']) feature['id'] = crypto.randomUUID()
+  return feature
+})
+
+// Structured clone to copy by value
+// Setup cards for roads
+const features = structuredClone(roadsJSON['features']);
+const cardHolderElement = document.getElementById('area-cards')
+
+for(const feature of features) {
+  const cardElement = document.createElement('div')
+  cardElement.id = feature['id'] 
+  cardElement.className = 'area-card'
+  cardHolderElement.appendChild(cardElement)
+}
+
+// Clean up any dirtying of json I perform - not needed for now
+// roadsJSON['features'] = roadsJSON['features'].map(feature => {
+//   delete feature['id']
+//   return feature
+// })
+
 // Add roads
 L.geoJSON(roadsJSON, {
   onEachFeature: (feature, layer) => {
     layer.on('click', (e) => {
-      console.log('test123')
+      const roadCardElement = document.getElementById(feature['id'])
+      selectedRoadCardElement?.classList.remove('selected')
+      roadCardElement.classList.add('selected')
+      selectedRoadCardElement = roadCardElement
     })
 
     layer.on('mouseover', (e) => {
