@@ -1,11 +1,16 @@
 
 const roadsJSON = await(await fetch('./geojson.json')).json()
 var selectedRoadCardElement = null
+var selectedRoad = null
+
+var loggedIn = false
+
+var loginElement = null
 
 // Map bounds
 const bounds = L.latLngBounds(
-  [51.754, -0.574], // SW corner
-  [51.768, -0.560]  // NE corner
+  [51.748, -0.606], // SW corner
+  [51.780, -0.540]  // NE corner
 )
 
 // Setup map
@@ -13,7 +18,7 @@ const map = L.map('map', {
   worldCopyJump: false,
   maxBounds: bounds,
   maxBoundsViscosity: 1.0,
-  minZoom: 15,
+  minZoom: 14,
   maxZoom: 18
 }).setView([51.7605, -0.566], 16)
 
@@ -36,10 +41,41 @@ const roadHoverStyle = {
   opacity: 1
 };
 
+const roadSelectedStyle = {
+  color: '#46ec49ff',
+  weight: 7,
+  opacity: 1
+};
+
 roadsJSON['features'] = roadsJSON['features'].map((feature) => {
   if(!feature['id']) feature['id'] = crypto.randomUUID()
   return feature
 })
+
+const startLogin = () => {
+  console.log('test')
+  const loginPopup = document.createElement('div')
+  loginPopup.className = 'login-mask'
+  loginPopup.addEventListener('click', () => dismissLogin())
+  loginElement = loginPopup
+
+  const loginMenu = document.createElement('div')
+  loginMenu.className = 'login-menu'
+  loginMenu.innerText = 'login'
+  loginMenu.addEventListener('click', e => e.stopPropagation())
+  loginPopup.appendChild(loginMenu)
+
+  document.body.appendChild(loginPopup)
+}
+
+const dismissLogin = () => {
+  if(loginElement) document.body.removeChild(loginElement)
+  loginElement = null
+}
+
+const joinArea = (feature) => {
+  console.log('test', feature)
+}
 
 // Structured clone to copy by value
 // Setup cards for roads
@@ -47,9 +83,25 @@ const features = structuredClone(roadsJSON['features']);
 const cardHolderElement = document.getElementById('area-cards')
 
 for(const feature of features) {
+
+  const button = document.createElement('button');
+  if(loggedIn) {
+    button.innerText = 'Join'
+    button.addEventListener('click', () => joinArea(feature))
+  } else {
+    button.innerText = 'Login to Join'
+    button.addEventListener('click', () => startLogin())
+  }
+
   const cardElement = document.createElement('div')
   cardElement.id = feature['id'] 
   cardElement.className = 'area-card'
+  // Gonna need backend for this - will get json from backend
+  cardElement.innerHTML = `
+    <div>Area: ${feature['name'] ?? 'No name for area found'}</div>
+    <div>Volunteers: ${feature['volunteers'] ?? 'No volunteers for area found'}</div>
+  `
+  cardElement.appendChild(button)
   cardHolderElement.appendChild(cardElement)
 }
 
@@ -59,22 +111,35 @@ for(const feature of features) {
 //   return feature
 // })
 
+const selectRoad = (roadCardElement, roadElement) => {
+  selectedRoadCardElement?.classList.remove('selected')
+  document.getElementById('area-cards').classList.add('visible')
+  roadCardElement.classList.add('selected')
+  selectedRoadCardElement = roadCardElement
+
+  selectedRoad?.setStyle(roadStyle)
+  roadElement.setStyle(roadSelectedStyle)
+  selectedRoad = roadElement
+}
+
 // Add roads
 L.geoJSON(roadsJSON, {
   onEachFeature: (feature, layer) => {
     layer.on('click', (e) => {
       const roadCardElement = document.getElementById(feature['id'])
-      selectedRoadCardElement?.classList.remove('selected')
-      roadCardElement.classList.add('selected')
-      selectedRoadCardElement = roadCardElement
+      selectRoad(roadCardElement, e.target)
     })
 
     layer.on('mouseover', (e) => {
-      e.target.setStyle(roadHoverStyle);
+      if(e.target != selectedRoad) {
+        e.target.setStyle(roadHoverStyle)
+      }
     })
 
     layer.on('mouseout', (e) => {
-      e.target.setStyle(roadStyle);
+      if(e.target != selectedRoad) {
+        e.target.setStyle(roadStyle)
+      }
     });
   },
   style: roadStyle
