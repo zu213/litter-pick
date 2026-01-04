@@ -11,7 +11,7 @@ var loginElement = null
 // Map bounds
 const bounds = L.latLngBounds(
   [51.748, -0.606], // SW corner
-  [51.780, -0.540]  // NE corner
+  [51.780, -0.530]  // NE corner
 )
 
 // Setup map

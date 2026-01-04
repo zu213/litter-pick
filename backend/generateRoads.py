@@ -1,3 +1,6 @@
+# Generate the empty road json for an area -> store it with no users attached
+# Basically just a programmatic way to setup roads initially.
+
 import requests
 import geopandas as gpd
 from shapely.geometry import LineString
@@ -5,7 +8,10 @@ from shapely.geometry import LineString
 query = """
 [out:json][timeout:25];
 (
-  way["highway"](51.75,-0.58,51.77,-0.56);
+  way["highway"]
+     ["highway"!~"service|track|path|footway|cycleway|bridleway|steps"]
+     ["access"!="private"]
+     (51.75,-0.58,51.77,-0.56);
 );
 out body geom;
 """
