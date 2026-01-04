@@ -24,6 +24,8 @@ h1 {
   z-index: 1000;
   background-color: aliceblue;
   max-width: 200px;
+  max-height: 90vh;
+  overflow: scroll;
   width: fit-content;
 }
 

@@ -5,6 +5,7 @@ var selectedRoad = null
 
 var loggedIn = false
 
+var tempCounter = 0
 var loginElement = null
 
 // Map bounds
@@ -53,7 +54,6 @@ roadsJSON['features'] = roadsJSON['features'].map((feature) => {
 })
 
 const startLogin = () => {
-  console.log('test')
   const loginPopup = document.createElement('div')
   loginPopup.className = 'login-mask'
   loginPopup.addEventListener('click', () => dismissLogin())
@@ -74,7 +74,6 @@ const dismissLogin = () => {
 }
 
 const joinArea = (feature) => {
-  console.log('test', feature)
 }
 
 // Structured clone to copy by value
@@ -98,9 +97,10 @@ for(const feature of features) {
   cardElement.className = 'area-card'
   // Gonna need backend for this - will get json from backend
   cardElement.innerHTML = `
-    <div>Area: ${feature['name'] ?? 'No name for area found'}</div>
+    <div>Area: ${feature['name'] ?? `No name for area found ${tempCounter}`}</div>
     <div>Volunteers: ${feature['volunteers'] ?? 'No volunteers for area found'}</div>
   `
+  tempCounter++
   cardElement.appendChild(button)
   cardHolderElement.appendChild(cardElement)
 }
@@ -113,7 +113,11 @@ for(const feature of features) {
 
 const selectRoad = (roadCardElement, roadElement) => {
   selectedRoadCardElement?.classList.remove('selected')
-  document.getElementById('area-cards').classList.add('visible')
+
+  // format area cards
+  const areaCardElement = document.getElementById('area-cards')
+  areaCardElement.classList.add('visible')
+  roadCardElement.scrollIntoView()
   roadCardElement.classList.add('selected')
   selectedRoadCardElement = roadCardElement
 
