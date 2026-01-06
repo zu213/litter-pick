@@ -5,7 +5,7 @@ var selectedRoad = null
 
 var loggedIn = false
 
-var tempCounter = 0
+var unnamedCounter = 0
 var loginElement = null
 
 // Map bounds
@@ -96,11 +96,17 @@ for(const feature of features) {
   cardElement.id = feature['id'] 
   cardElement.className = 'area-card'
   // Gonna need backend for this - will get json from backend
+  let name
+  if(feature['properties'] && feature['properties']['name']) {
+    name = feature['properties']['name']
+  } else {
+    name = `Unnamed area: ${unnamedCounter}`
+    unnamedCounter++
+  }
   cardElement.innerHTML = `
-    <div>Area: ${feature['name'] ?? `No name for area found ${tempCounter}`}</div>
+    <div>Area: ${feature['properties']['name'] ?? `Unnamed area: ${unnamedCounter}`}</div>
     <div>Volunteers: ${feature['volunteers'] ?? 'No volunteers for area found'}</div>
   `
-  tempCounter++
   cardElement.appendChild(button)
   cardHolderElement.appendChild(cardElement)
 }

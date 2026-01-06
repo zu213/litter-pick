@@ -33,17 +33,21 @@ if not r.text.strip():
 
 data = r.json()
 
-
 lines = []
 highways = []
+names = []
 
 for el in data["elements"]:
     coords = [(p["lon"], p["lat"]) for p in el["geometry"]]
     lines.append(LineString(coords))
     highways.append(el["tags"].get("highway", "road"))
+    names.append(el["tags"].get("name")) 
 
 gdf = gpd.GeoDataFrame(
-    {"highway": highways},
+    {
+        "highway": highways,
+        "name": names
+    },
     geometry=lines,
     crs="EPSG:4326"
 )
