@@ -1,5 +1,27 @@
 
-const roadsJSON = await(await fetch('./geojson.json')).json()
+
+const coords = {n: 51.748, e: -0.606, s: 51.780, w: -0.530}
+
+const getRoadJSON = async (coords) => {
+  return (fetch('http://127.0.0.1:8080/roads/', {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer`,
+    },
+    body: JSON.stringify(
+      coords,
+    ),
+  })).then(response => {
+    if(response.ok) return response.json()
+  })
+}
+
+const roadsJSON = await getRoadJSON(coords)
+
+console.log(roadsJSON)
+
+
 var selectedRoadCardElement = null
 var selectedRoad = null
 
@@ -59,13 +81,29 @@ const startLogin = () => {
   loginPopup.addEventListener('click', () => dismissLogin())
   loginElement = loginPopup
 
-  const loginMenu = document.createElement('div')
-  loginMenu.className = 'login-menu'
-  loginMenu.innerText = 'login'
-  loginMenu.addEventListener('click', e => e.stopPropagation())
+  const loginMenu = createLoginMenu()
   loginPopup.appendChild(loginMenu)
 
   document.body.appendChild(loginPopup)
+}
+
+const createLoginMenu = () => {
+  const loginMenu = document.createElement('div')
+  loginMenu.className = 'login-menu'
+  const introInfo = document.createElement('div')
+  introInfo.innerText = 'login'
+  const userNameField = document.createElement('input')
+  const passwordField = document.createElement('input')
+  const loginButton = document.createElement('button')
+  loginButton.addEventListener('click', e => console.log('logining'))
+
+  loginMenu.appendChild(introInfo)
+  loginMenu.appendChild(userNameField)
+  loginMenu.appendChild(passwordField)
+  loginMenu.appendChild(loginButton)
+
+  loginMenu.addEventListener('click', e => e.stopPropagation())
+  return loginMenu
 }
 
 const dismissLogin = () => {
