@@ -192,3 +192,34 @@ L.geoJSON(roadsJSON, {
   },
   style: roadStyle
 }).addTo(map)
+
+const fetchToken = async () => {
+    const res = await fetch("http://localhost:8080/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      username: 'johndoe',
+      password: 'secret',
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Login failed");
+  }
+
+  const json =await res.json()
+
+  const res2 = await fetch("http://localhost:8080/token", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${json['access_token']}`,
+      "Content-Type": "application/json",
+    }
+  })
+
+  console.log(await res2.json())
+}
+
+fetchToken()
