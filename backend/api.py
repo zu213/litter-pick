@@ -134,19 +134,6 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/users/me/", response_model=User)
-async def read_users_me(
-    current_user: Annotated[User, Depends(get_current_user)],
-):
-  return current_user
-
-
-@app.get("/users/me/items/")
-async def read_own_items(
-    current_user: Annotated[User, Depends(get_current_user)],
-):
-  return [{"item_id": "Foo", "owner": current_user.username}]
-
 # POST endpoint
 @app.post("/roads/")
 async def roads(coords: Optional[Coords] = None):#
@@ -155,3 +142,13 @@ async def roads(coords: Optional[Coords] = None):#
   with open("roads.geojson", "r", encoding="utf-8") as f:
     roadsJSON = json.load(f)
   return roadsJSON
+
+
+#
+@app.post("/roads/$uuid")
+async def sign_up_for_road(
+    current_user: Annotated[User, Depends(get_current_user)],
+):
+  # sign current user up for road needs db
+  print(current_user)
+  return [{"item_id": "Foo", "owner": current_user.username}]

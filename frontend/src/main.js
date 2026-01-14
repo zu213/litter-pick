@@ -1,4 +1,4 @@
-
+import { startLoginFlow } from "./login.js";
 
 const coords = {n: 51.748, e: -0.606, s: 51.780, w: -0.530}
 
@@ -76,40 +76,37 @@ roadsJSON['features'] = roadsJSON['features'].map((feature) => {
 })
 
 const startLogin = () => {
-  const loginPopup = document.createElement('div')
-  loginPopup.className = 'login-mask'
-  loginPopup.addEventListener('click', () => dismissLogin())
-  loginElement = loginPopup
+  startLoginFlow(document.getElementById("login"));
 
-  const loginMenu = createLoginMenu()
-  loginPopup.appendChild(loginMenu)
+  // const loginPopup = document.createElement('div')
+  // loginPopup.className = 'login-mask'
+  // loginPopup.addEventListener('click', () => dismissLogin())
+  // loginElement = loginPopup
 
-  document.body.appendChild(loginPopup)
+  // const loginMenu = createLoginMenu()
+  // loginPopup.appendChild(loginMenu)
+
+  // document.body.appendChild(loginPopup)
 }
 
-const createLoginMenu = () => {
-  const loginMenu = document.createElement('div')
-  loginMenu.className = 'login-menu'
-  const introInfo = document.createElement('div')
-  introInfo.innerText = 'login'
-  const userNameField = document.createElement('input')
-  const passwordField = document.createElement('input')
-  const loginButton = document.createElement('button')
-  loginButton.addEventListener('click', e => console.log('logining'))
+// const createLoginMenu = () => {
+//   const loginMenu = document.createElement('div')
+//   loginMenu.className = 'login-menu'
+//   const introInfo = document.createElement('div')
+//   introInfo.innerText = 'login'
+//   const userNameField = document.createElement('input')
+//   const passwordField = document.createElement('input')
+//   const loginButton = document.createElement('button')
+//   loginButton.addEventListener('click', e => console.log('logining'))
 
-  loginMenu.appendChild(introInfo)
-  loginMenu.appendChild(userNameField)
-  loginMenu.appendChild(passwordField)
-  loginMenu.appendChild(loginButton)
+//   loginMenu.appendChild(introInfo)
+//   loginMenu.appendChild(userNameField)
+//   loginMenu.appendChild(passwordField)
+//   loginMenu.appendChild(loginButton)
 
-  loginMenu.addEventListener('click', e => e.stopPropagation())
-  return loginMenu
-}
-
-const dismissLogin = () => {
-  if(loginElement) document.body.removeChild(loginElement)
-  loginElement = null
-}
+//   loginMenu.addEventListener('click', e => e.stopPropagation())
+//   return loginMenu
+// }
 
 const joinArea = (feature) => {
 }
