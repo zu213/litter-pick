@@ -1,20 +1,31 @@
+body, html {
+  font-family: Tahoma;
+  background-color: rgb(245, 245, 245);
+}
+
+body {
+  margin: 20px
+}
+
 h1 {
   text-align: center;
   height: 30px;
-  margin: 16px;
+  margin: 20px;
+  font-weight: 550;
 }
 
 .area-card {
   width: auto;
   height: auto;
-  background-color: red;
+  background-color: rgb(240, 240, 240);
   margin: 10px;
   border: 2px solid transparent;
   padding: 10px;
+  border-radius: 10px;
 }
 
 .selected {
-  border: 2px solid black;
+  border: 3px dashed rgb(58, 58, 58);
 }
 
 .area-cards-holder {
@@ -22,9 +33,10 @@ h1 {
   top: 62px;
   right: 10px;
   z-index: 1000;
-  background-color: aliceblue;
+  background-color: rgb(255, 255, 255);
   max-width: 200px;
-  max-height: 90vh;
+  max-height: calc(90% - 30px);
+  margin: 10px 0;
   overflow: scroll;
   width: fit-content;
 }
@@ -42,6 +54,27 @@ h1 {
 .login-menu {
   background-color: white;
   position: relative;
+  left: 50%;
+  top: 50%;
+  width: fit-content;
+  padding: 10px;
+  margin: 10px;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.map-container {
+  height: 90%;
+  max-height: 500px;
+  margin: 20px;
+  border: 2px solid rgb(212, 212, 212);
+  border-radius: 5px;
+}
+
+.detailed-card {
+  background-color: white;
+  position: relative;
+  z-index: 1001;
   left: 50%;
   top: 50%;
   width: fit-content;

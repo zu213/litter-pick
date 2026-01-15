@@ -1,4 +1,4 @@
-import { startLoginFlow } from "./login.js";
+import { selectRoadCard, startSidebarFlow } from "./sidebar.js"
 
 const coords = {n: 51.748, e: -0.606, s: 51.780, w: -0.530}
 
@@ -19,16 +19,7 @@ const getRoadJSON = async (coords) => {
 
 const roadsJSON = await getRoadJSON(coords)
 
-console.log(roadsJSON)
-
-
-var selectedRoadCardElement = null
 var selectedRoad = null
-
-var loggedIn = false
-
-var unnamedCounter = 0
-var loginElement = null
 
 // Map bounds
 const bounds = L.latLngBounds(
@@ -75,77 +66,16 @@ roadsJSON['features'] = roadsJSON['features'].map((feature) => {
   return feature
 })
 
-const startLogin = () => {
-  startLoginFlow(document.getElementById("login"));
-
-  // const loginPopup = document.createElement('div')
-  // loginPopup.className = 'login-mask'
-  // loginPopup.addEventListener('click', () => dismissLogin())
-  // loginElement = loginPopup
-
-  // const loginMenu = createLoginMenu()
-  // loginPopup.appendChild(loginMenu)
-
-  // document.body.appendChild(loginPopup)
-}
-
-// const createLoginMenu = () => {
-//   const loginMenu = document.createElement('div')
-//   loginMenu.className = 'login-menu'
-//   const introInfo = document.createElement('div')
-//   introInfo.innerText = 'login'
-//   const userNameField = document.createElement('input')
-//   const passwordField = document.createElement('input')
-//   const loginButton = document.createElement('button')
-//   loginButton.addEventListener('click', e => console.log('logining'))
-
-//   loginMenu.appendChild(introInfo)
-//   loginMenu.appendChild(userNameField)
-//   loginMenu.appendChild(passwordField)
-//   loginMenu.appendChild(loginButton)
-
-//   loginMenu.addEventListener('click', e => e.stopPropagation())
-//   return loginMenu
-// }
-
 const joinArea = (feature) => {
 }
 
 // Structured clone to copy by value
 // Setup cards for roads
 const features = structuredClone(roadsJSON['features']);
-const cardHolderElement = document.getElementById('area-cards')
 
-for(const feature of features) {
+startSidebarFlow(features)
 
-  const button = document.createElement('button');
-  if(loggedIn) {
-    button.innerText = 'Join'
-    button.addEventListener('click', () => joinArea(feature))
-  } else {
-    button.innerText = 'Login to Join'
-    button.addEventListener('click', () => startLogin())
-  }
-
-  const cardElement = document.createElement('div')
-  cardElement.id = feature['id'] 
-  cardElement.className = 'area-card'
-  // Gonna need backend for this - will get json from backend
-  let name
-  if(feature['properties'] && feature['properties']['name']) {
-    name = feature['properties']['name']
-  } else {
-    name = `Unnamed area: ${unnamedCounter}`
-    unnamedCounter++
-  }
-  cardElement.innerHTML = `
-    <div>Area: ${feature['properties']['name'] ?? `Unnamed area: ${unnamedCounter}`}</div>
-    <div>Volunteers: ${feature['volunteers'] ?? 'No volunteers for area found'}</div>
-  `
-  cardElement.appendChild(button)
-  cardHolderElement.appendChild(cardElement)
-}
-
+// KEEP PLEASE
 // Clean up any dirtying of json I perform - not needed for now
 // roadsJSON['features'] = roadsJSON['features'].map(feature => {
 //   delete feature['id']
@@ -153,14 +83,7 @@ for(const feature of features) {
 // })
 
 const selectRoad = (roadCardElement, roadElement) => {
-  selectedRoadCardElement?.classList.remove('selected')
-
-  // format area cards
-  const areaCardElement = document.getElementById('area-cards')
-  areaCardElement.classList.add('visible')
-  roadCardElement.scrollIntoView()
-  roadCardElement.classList.add('selected')
-  selectedRoadCardElement = roadCardElement
+  selectRoadCard(roadCardElement)
 
   selectedRoad?.setStyle(roadStyle)
   roadElement.setStyle(roadSelectedStyle)
@@ -189,34 +112,3 @@ L.geoJSON(roadsJSON, {
   },
   style: roadStyle
 }).addTo(map)
-
-const fetchToken = async () => {
-    const res = await fetch("http://localhost:8080/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      username: 'johndoe',
-      password: 'secret',
-    }),
-  });
-
-  if (!res.ok) {
-    throw new Error("Login failed");
-  }
-
-  const json =await res.json()
-
-  const res2 = await fetch("http://localhost:8080/token", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${json['access_token']}`,
-      "Content-Type": "application/json",
-    }
-  })
-
-  console.log(await res2.json())
-}
-
-fetchToken()

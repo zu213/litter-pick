@@ -1,6 +1,5 @@
 var loginElement = null
 
-
 export async function startLoginFlow() {
   const tpl = document.getElementById("login-template");
   const node = tpl.content.cloneNode(true);

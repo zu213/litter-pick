@@ -12,8 +12,7 @@
   <body>
 
     <h1>Berko Litter Pick</h1>
-    <div id="map" style="height: 500px"></div>
-    <div id="area-cards" class="area-cards-holder"></div>
+    <div class='map-container' id="map"></div>
     <script type="module" src="../src/main.js" />
   </body>
 
@@ -24,6 +23,18 @@
         <input />
         <button>Login</button>
       </div>
+    </div>
+  </template>
+
+  <template id="sidebar-template">
+    <div id="area-cards" class="area-cards-holder">
+    </div>
+  </template>
+
+  <template id="detailed-card-template">
+    <div class="detailed-card">
+      <div id="area-title"></div>
+      <div id="area-volunteers"></div>
     </div>
   </template>
 
