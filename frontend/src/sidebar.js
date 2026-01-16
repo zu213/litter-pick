@@ -1,6 +1,6 @@
 import { startLoginFlow } from "./login.js"
 
-var sidebarElement = null
+var currentDetailedCardElement = null
 var selectedRoadCardElement = null
 var loggedIn = false
 var unnamedCounter = 0
@@ -42,12 +42,10 @@ function startAreaCardFlow(feature) {
   const tpl = document.getElementById("detailed-card-template");
   const node = tpl.content.cloneNode(true);
 
-  const cardElement = node.querySelector('.detailed-card')
+  const cardBase = node.querySelector('.detailed-card-mask')
 
-  console.log(cardElement)
-
-  cardElement.querySelector('#area-volunteers').innerText = `Volunteers: ${feature['volunteers'] ?? 'No volunteers for area found'}`
-  cardElement.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
+  cardBase.querySelector('#area-volunteers').innerText = `Volunteers: ${feature['volunteers'] ?? 'No volunteers for area found'}`
+  cardBase.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
 
   const button = document.createElement('button');
   if(loggedIn) {
@@ -58,9 +56,20 @@ function startAreaCardFlow(feature) {
     button.addEventListener('click', () => startLoginFlow())
   }
 
-  cardElement.appendChild(button)
+  const card = cardBase.querySelector('.detailed-card')
+  card.appendChild(button)
+  card.addEventListener('click', (e) => e.stopPropagation())
 
-  document.body.appendChild(cardElement)
+  cardBase.addEventListener('click', () => removeCardElement())
+
+  document.body.appendChild(cardBase)
+
+  currentDetailedCardElement = cardBase
+}
+
+function removeCardElement() {
+  if(currentDetailedCardElement) document.body.removeChild(currentDetailedCardElement)
+  currentDetailedCardElement = null
 }
 
 const fetchToken = async () => {

@@ -41,7 +41,7 @@ h1 {
   width: fit-content;
 }
 
-.login-mask {
+.login-mask, .detailed-card-mask {
   z-index: 1001;
   width: 100%;
   height: 100%;
@@ -51,7 +51,7 @@ h1 {
   background-color: rgba(0,0,0,0.4);
 }
 
-.login-menu {
+.login-menu, .detailed-card {
   background-color: white;
   position: relative;
   left: 50%;
@@ -69,17 +69,4 @@ h1 {
   margin: 20px;
   border: 2px solid rgb(212, 212, 212);
   border-radius: 5px;
-}
-
-.detailed-card {
-  background-color: white;
-  position: relative;
-  z-index: 1001;
-  left: 50%;
-  top: 50%;
-  width: fit-content;
-  padding: 10px;
-  margin: 10px;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
 }
