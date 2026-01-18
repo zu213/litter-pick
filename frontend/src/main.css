@@ -24,6 +24,10 @@ h1 {
   border-radius: 10px;
 }
 
+.area-card:hover {
+  transform: scale(0.97);
+}
+
 .selected {
   border: 3px dashed rgb(58, 58, 58);
 }
@@ -34,7 +38,7 @@ h1 {
   right: 10px;
   z-index: 1000;
   background-color: rgb(255, 255, 255);
-  max-width: 200px;
+  max-width: 300px;
   max-height: calc(90% - 30px);
   margin: 10px 0;
   overflow: scroll;
@@ -69,4 +73,21 @@ h1 {
   margin: 20px;
   border: 2px solid rgb(212, 212, 212);
   border-radius: 5px;
+}
+
+.detailed-card {
+  padding: 20px;
+  border-radius: 10px;
+
+  button {
+    padding: 10px;
+    text-align: center;
+    margin: 10px;
+    left: 50%;
+    position: relative;
+    transform: translate(calc(-50% - 10px), 0);
+    border-radius: 10px;
+  }
+
+
 }
