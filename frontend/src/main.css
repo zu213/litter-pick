@@ -53,6 +53,14 @@ h1 {
   top: 0;
   left: 0;
   background-color: rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+
+.detailed-card-mask.is-open {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .login-menu, .detailed-card {
@@ -88,6 +96,4 @@ h1 {
     transform: translate(calc(-50% - 10px), 0);
     border-radius: 10px;
   }
-
-
 }

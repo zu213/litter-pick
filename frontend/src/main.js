@@ -1,30 +1,12 @@
-import { selectRoadCard, startSidebarFlow } from "./sidebar.js"
+import { startSidebarFlow } from "./sidebar.js"
+import { addRoadsToMap, getRoadJSON } from "./roads.js"
 
-const coords = {n: 51.748, e: -0.606, s: 51.780, w: -0.530}
-
-const getRoadJSON = async (coords) => {
-  return (fetch('http://127.0.0.1:8080/roads/', {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer`,
-    },
-    body: JSON.stringify(
-      coords,
-    ),
-  })).then(response => {
-    if(response.ok) return response.json()
-  })
-}
-
-const roadsJSON = await getRoadJSON(coords)
-
-var selectedRoad = null
+const coords = {s: 51.748, w: -0.606, n: 51.780, e: -0.530}
 
 // Map bounds
 const bounds = L.latLngBounds(
-  [51.748, -0.606], // SW corner
-  [51.780, -0.530]  // NE corner
+  [coords.s, coords.w], // SW corner
+  [coords.n, coords.e]  // NE corner
 )
 
 // Setup map
@@ -43,37 +25,9 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map)
 
-const roadStyle = {
-  'color': '#ff7800',
-  'weight': 5,
-  'opacity': 0.65
-}
 
-const roadHoverStyle = {
-  color: '#00ffff',
-  weight: 7,
-  opacity: 1
-};
-
-const roadSelectedStyle = {
-  color: '#46ec49ff',
-  weight: 7,
-  opacity: 1
-};
-
-roadsJSON['features'] = roadsJSON['features'].map((feature) => {
-  if(!feature['id']) feature['id'] = crypto.randomUUID()
-  return feature
-})
-
-const joinArea = (feature) => {
-}
-
-// Structured clone to copy by value
-// Setup cards for roads
+const roadsJSON = await getRoadJSON(coords)
 const features = structuredClone(roadsJSON['features']);
-
-startSidebarFlow(features)
 
 // KEEP PLEASE
 // Clean up any dirtying of json I perform - not needed for now
@@ -82,33 +36,8 @@ startSidebarFlow(features)
 //   return feature
 // })
 
-const selectRoad = (roadCardElement, roadElement) => {
-  selectRoadCard(roadCardElement)
+startSidebarFlow(features)
+addRoadsToMap(roadsJSON, map)
 
-  selectedRoad?.setStyle(roadStyle)
-  roadElement.setStyle(roadSelectedStyle)
-  selectedRoad = roadElement
-}
 
-// Add roads
-L.geoJSON(roadsJSON, {
-  onEachFeature: (feature, layer) => {
-    layer.on('click', (e) => {
-      const roadCardElement = document.getElementById(feature['id'])
-      selectRoad(roadCardElement, e.target)
-    })
 
-    layer.on('mouseover', (e) => {
-      if(e.target != selectedRoad) {
-        e.target.setStyle(roadHoverStyle)
-      }
-    })
-
-    layer.on('mouseout', (e) => {
-      if(e.target != selectedRoad) {
-        e.target.setStyle(roadStyle)
-      }
-    });
-  },
-  style: roadStyle
-}).addTo(map)

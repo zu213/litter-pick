@@ -1,9 +1,10 @@
 import { startLoginFlow } from "./login.js"
+import { selectRoadFromId } from "./roads.js"
 
 var currentDetailedCardElement = null
 var selectedRoadCardElement = null
 var loggedIn = false
-var unnamedCounter = 0
+var sidebarElement
 
 export async function startSidebarFlow(features) {
   const tpl = document.getElementById("sidebar-template");
@@ -16,7 +17,11 @@ export async function startSidebarFlow(features) {
     const cardElement = document.createElement('div')
     cardElement.id = feature['id'] 
     cardElement.className = 'area-card'
-    cardElement.addEventListener('click', () => startAreaCardFlow(feature))
+    cardElement.addEventListener('click', () => {
+      startAreaCardFlow(feature)
+      selectRoadCard(cardElement)
+      selectRoadFromId(feature['id'])
+    })
 
     cardElement.innerHTML = `<div>Area: ${feature['properties']['name'] ?? `Unnamed area`}</div>`
     cardHolderElement.appendChild(cardElement)
@@ -44,15 +49,19 @@ function startAreaCardFlow(feature) {
 
   const cardBase = node.querySelector('.detailed-card-mask')
 
+  requestAnimationFrame(() => {
+    cardBase.classList.add("is-open");
+  });
+
   cardBase.querySelector('#area-volunteers').innerText = `Volunteers: ${feature['volunteers'] ?? 'No volunteers for area found'}`
   cardBase.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
 
   const button = document.createElement('button');
   if(loggedIn) {
-    button.innerText = 'Join'
+    button.innerText = 'Volunteer'
     button.addEventListener('click', () => joinArea(feature))
   } else {
-    button.innerText = 'Login to Join'
+    button.innerText = 'Login to Volunteer'
     button.addEventListener('click', () => startLoginFlow())
   }
 
@@ -68,8 +77,17 @@ function startAreaCardFlow(feature) {
 }
 
 function removeCardElement() {
-  if(currentDetailedCardElement) document.body.removeChild(currentDetailedCardElement)
-  currentDetailedCardElement = null
+  currentDetailedCardElement.classList.remove("is-open");
+
+  currentDetailedCardElement.addEventListener(
+    "transitionend",
+    () => {
+      if(currentDetailedCardElement) document.body.removeChild(currentDetailedCardElement)
+      currentDetailedCardElement = null
+    },
+    { once: true }
+  );
+
 }
 
 const fetchToken = async () => {
