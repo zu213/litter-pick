@@ -1,10 +1,7 @@
-import { startLoginFlow } from "./login.js"
 import { selectRoadFromId } from "./roads.js"
+import { startAreaCardFlow } from "./detailedCard.js";
 
-var currentDetailedCardElement = null
 var selectedRoadCardElement = null
-var loggedIn = false
-var sidebarElement
 
 export async function startSidebarFlow(features) {
   const tpl = document.getElementById("sidebar-template");
@@ -42,79 +39,3 @@ export function selectRoadCard(roadCardElement) {
   selectedRoadCardElement = roadCardElement
 }
 
-function startAreaCardFlow(feature) {
-
-  const tpl = document.getElementById("detailed-card-template");
-  const node = tpl.content.cloneNode(true);
-
-  const cardBase = node.querySelector('.detailed-card-mask')
-
-  requestAnimationFrame(() => {
-    cardBase.classList.add("is-open");
-  });
-
-  cardBase.querySelector('#area-volunteers').innerText = `Volunteers: ${feature['volunteers'] ?? 'No volunteers for area found'}`
-  cardBase.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
-
-  const button = document.createElement('button');
-  if(loggedIn) {
-    button.innerText = 'Volunteer'
-    button.addEventListener('click', () => joinArea(feature))
-  } else {
-    button.innerText = 'Login to Volunteer'
-    button.addEventListener('click', () => startLoginFlow())
-  }
-
-  const card = cardBase.querySelector('.detailed-card')
-  card.appendChild(button)
-  card.addEventListener('click', (e) => e.stopPropagation())
-
-  cardBase.addEventListener('click', () => removeCardElement())
-
-  document.body.appendChild(cardBase)
-
-  currentDetailedCardElement = cardBase
-}
-
-function removeCardElement() {
-  currentDetailedCardElement.classList.remove("is-open");
-
-  currentDetailedCardElement.addEventListener(
-    "transitionend",
-    () => {
-      if(currentDetailedCardElement) document.body.removeChild(currentDetailedCardElement)
-      currentDetailedCardElement = null
-    },
-    { once: true }
-  );
-
-}
-
-const fetchToken = async () => {
-    const res = await fetch("http://localhost:8080/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      username: 'johndoe',
-      password: 'secret',
-    }),
-  });
-
-  if (!res.ok) {
-    throw new Error("Login failed");
-  }
-
-  const json =await res.json()
-
-  const res2 = await fetch("http://localhost:8080/token", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${json['access_token']}`,
-      "Content-Type": "application/json",
-    }
-  })
-
-  console.log(await res2.json())
-}
