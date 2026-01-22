@@ -9,7 +9,6 @@ body {
 
 h1 {
   text-align: center;
-  height: 30px;
   margin: 20px;
   font-weight: 550;
 }
@@ -46,7 +45,6 @@ h1 {
 }
 
 .login-mask, .detailed-card-mask {
-  z-index: 1001;
   width: 100%;
   height: 100%;
   position: fixed;
@@ -58,9 +56,17 @@ h1 {
   transition: opacity 200ms ease;
 }
 
-.detailed-card-mask.is-open {
+.detailed-card-mask.is-open, .login-mask.is-open {
   opacity: 1;
   pointer-events: auto;
+}
+
+.detailed-card-mask {
+  z-index: 1001;
+}
+
+.login-mask {
+  z-index: 1002;
 }
 
 .login-menu, .detailed-card {
@@ -99,10 +105,13 @@ h1 {
 }
 
 .profile-page-button {
-  background-color: red;
-  margin: 10px;
-  width: 20px;
+  background-image: url("/frontend/public/imgs/profile.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 15px;
+  width: 40px;
   aspect-ratio: 1;
+  border-radius: 3px;
   right: 0;
   top: 0;
   position: absolute;

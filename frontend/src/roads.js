@@ -29,7 +29,7 @@ export function addRoadsToMap(roadsJSON, map) {
   // Add roads
   L.geoJSON(roadsJSON, {
     onEachFeature: (feature, layer) => {
-      roadById.set(feature.id, layer);
+      roadById.set(feature.id, layer)
 
       layer.on('click', (e) => {
         const roadCardElement = document.getElementById(feature['id'])
@@ -47,19 +47,19 @@ export function addRoadsToMap(roadsJSON, map) {
         if(e.target != selectedRoad) {
           e.target.setStyle(roadStyle)
         }
-      });
+      })
     },
     style: roadStyle
   }).addTo(map)
 }
 
 export function selectRoadFromId(roadId) {
-  const roadObj = roadById.get(roadId);
-  if (!roadObj) return;
+  const roadObj = roadById.get(roadId)
+  if (!roadObj) return
 
-  selectedRoad?.setStyle(roadStyle);
-  roadObj.setStyle(roadSelectedStyle);
-  selectedRoad = roadObj;
+  selectedRoad?.setStyle(roadStyle)
+  roadObj.setStyle(roadSelectedStyle)
+  selectedRoad = roadObj
 }
 
 const selectRoad = (roadCardElement, roadElement) => {

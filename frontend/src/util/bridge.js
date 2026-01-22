@@ -10,7 +10,7 @@ async function fetchToken(username, password) {
       username: 'johndoe',
       password: 'secret',
     }),
-  });
+  })
 
   if (!res.ok) {
     return false

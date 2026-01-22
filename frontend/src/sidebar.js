@@ -1,11 +1,12 @@
 import { selectRoadFromId } from "./roads.js"
-import { startAreaCardFlow } from "./detailedCard.js";
+import { startAreaCardFlow } from "./detailedCard.js"
 
 var selectedRoadCardElement = null
+var sidebarElement = null
 
 export async function startSidebarFlow(features) {
-  const tpl = document.getElementById("sidebar-template");
-  const node = tpl.content.cloneNode(true);
+  const tpl = document.getElementById("sidebar-template")
+  const node = tpl.content.cloneNode(true)
 
   const cardHolderElement = node.getElementById('area-cards')
   

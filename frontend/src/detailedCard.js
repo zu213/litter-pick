@@ -5,19 +5,19 @@ var loggedIn = false
 
 export function startAreaCardFlow(feature) {
 
-  const tpl = document.getElementById("detailed-card-template");
-  const node = tpl.content.cloneNode(true);
+  const tpl = document.getElementById("detailed-card-template")
+  const node = tpl.content.cloneNode(true)
 
   const cardBase = node.querySelector('.detailed-card-mask')
 
   requestAnimationFrame(() => {
-    cardBase.classList.add("is-open");
-  });
+    cardBase.classList.add("is-open")
+  })
 
   cardBase.querySelector('#area-volunteers').innerText = `Volunteers: ${feature['volunteers'] ?? 'No volunteers for area found'}`
   cardBase.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
 
-  const button = document.createElement('button');
+  const button = document.createElement('button')
   if(loggedIn) {
     button.innerText = 'Volunteer'
     button.addEventListener('click', () => joinArea(feature))
@@ -38,7 +38,7 @@ export function startAreaCardFlow(feature) {
 }
 
 function removeCardElement() {
-  currentDetailedCardElement.classList.remove("is-open");
+  currentDetailedCardElement.classList.remove("is-open")
 
   currentDetailedCardElement.addEventListener(
     "transitionend",
@@ -47,6 +47,5 @@ function removeCardElement() {
       currentDetailedCardElement = null
     },
     { once: true }
-  );
-
+  )
 }

@@ -1,4 +1,4 @@
-import { getUser } from "./util/bridge.js";
+import { getUser } from "./util/bridge.js"
 
 const user = await getUser()
 
@@ -13,10 +13,10 @@ function startProfileFlow() {
 }
 
 function startProfileLoginFlow() {
-  const tpl = document.getElementById("login-form-template");
-  const node = tpl.content.cloneNode(true);
+  const tpl = document.getElementById("login-form-template")
+  const node = tpl.content.cloneNode(true)
 
-  const loginMenuElement = node.querySelector('.login-menu')
+  const loginMenuElement = node.querySelector('.login-menu2')
 
   document.body.appendChild(loginMenuElement)
 }

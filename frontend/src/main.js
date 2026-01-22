@@ -27,7 +27,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 
 const roadsJSON = await getRoadJSON(coords)
-const features = structuredClone(roadsJSON['features']);
+const features = structuredClone(roadsJSON['features'])
 
 // KEEP PLEASE
 // Clean up any dirtying of json I perform - not needed for now
