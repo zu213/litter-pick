@@ -16,7 +16,7 @@ function startProfileLoginFlow() {
   const tpl = document.getElementById("login-form-template")
   const node = tpl.content.cloneNode(true)
 
-  const loginMenuElement = node.querySelector('.login-menu2')
+  const loginMenuElement = node.querySelector('.profile-login-menu')
 
   document.body.appendChild(loginMenuElement)
 }

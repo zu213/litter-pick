@@ -22,8 +22,16 @@
   margin: 20px;
 }
 
-.login-menu {
+.profile-login-menu {
+  left: 50%;
+  transform: translate(-50%, 0);
+  position: relative;
   display: block;
+  width: fit-content;
   border-radius: 5px;
   margin: 15px;
+
+  .login-button {
+    text-align: center;
+  }
 }
