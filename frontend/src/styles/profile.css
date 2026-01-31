@@ -26,12 +26,36 @@
   left: 50%;
   transform: translate(-50%, 0);
   position: relative;
-  display: block;
+  display: grid;
+  columns: 2;
   width: fit-content;
   border-radius: 5px;
   margin: 15px;
 
   .login-button {
     text-align: center;
+    padding: 10px;
+    margin: 10px auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 10px;
+    min-width: 100px;
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  input {
+    margin: 5px;
+  }
+}
+
+.username-input, .password-input {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  div {
+    width: fit-content;
   }
 }

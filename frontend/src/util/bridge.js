@@ -1,14 +1,14 @@
 var userToken = localStorage.getItem('token')
 
-async function fetchToken(username, password) {
+export async function fetchToken(username, password) {
   const res = await fetch("http://localhost:8080/token", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: new URLSearchParams({
-      username: 'johndoe',
-      password: 'secret',
+      username,
+      password,
     }),
   })
 
@@ -18,7 +18,7 @@ async function fetchToken(username, password) {
 
   const json = await res.json()
   userToken = json['access_token']
-  localStorage.setItem(userToken)
+  localStorage.setItem('userToken', userToken)
   return true
   
 }

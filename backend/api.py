@@ -50,9 +50,7 @@ class Coords(BaseModel):
   w: float
 
 password_hash = PasswordHash.recommended()
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 app = FastAPI()
 
 def verify_password(plain_password, hashed_password):
@@ -133,10 +131,9 @@ async def login_for_access_token(
     )
     return Token(access_token=access_token, token_type="bearer")
 
-
 # POST endpoint
 @app.post("/roads/")
-async def roads(coords: Optional[Coords] = None):#
+async def roads(coords: Optional[Coords] = None):
   # Get the roads for an area, this will be a database req with coords maybe
   
   with open("roads.geojson", "r", encoding="utf-8") as f:
@@ -151,4 +148,4 @@ async def sign_up_for_road(
 ):
   # sign current user up for road needs db
   print(current_user)
-  return [{"item_id": "Foo", "owner": current_user.username}]
+  return {"item_id": uuid, "users": [current_user]}

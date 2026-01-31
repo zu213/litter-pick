@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "",
     "start": "uvicorn api:app --host 0.0.0.0 --port 8080",
-    "live": "uvicorn  api:app --reload"
+    "live": "uvicorn  api:app --reload",
+    "local": "C:\\Users\\evilm\\AppData\\Local\\Programs\\Python\\Python311\\python.exe -m uvicorn api:app --host 0.0.0.0 --port 8080"
   },
   "author": "",
   "license": "ISC",

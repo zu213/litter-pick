@@ -9,7 +9,7 @@ body {
 
 h1 {
   text-align: center;
-  margin: 20px;
+  margin: 10px;
   font-weight: 550;
 }
 
@@ -84,7 +84,7 @@ h1 {
 .map-container {
   height: 90%;
   max-height: 500px;
-  margin: 20px;
+  margin: 0;
   border: 2px solid rgb(212, 212, 212);
   border-radius: 5px;
 }
