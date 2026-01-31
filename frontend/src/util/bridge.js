@@ -23,9 +23,9 @@ export async function fetchToken(username, password) {
   
 }
 
-function validateToken(){
-  return fetch("http://localhost:8080/token", {
-    method: "HEAD",
+export function validateToken(){
+  return fetch("http://localhost:8080/token/validate", {
+    method: "GET",
     headers: {
       "Authorization": `Bearer ${userToken}`,
       "Content-Type": "application/json",

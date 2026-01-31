@@ -2,7 +2,7 @@ import { fetchToken } from "./util/bridge.js"
 
 var loginElement = null
 
-export async function startLoginFlow() {
+export function startLoginFlow() {
   const tpl = document.getElementById("login-template")
   const node = tpl.content.cloneNode(true)
 
@@ -41,14 +41,20 @@ const login = () => {
   const usernameElement = loginElement.querySelector('.login-menu-username--input')
   const passwordElement = loginElement.querySelector('.login-menu-password--input')
 
-  if(!usernameElement.value || !passwordElement.value) return
+  if(!usernameElement.value || !passwordElement.value) return false
 
-  fetchToken(usernameElement.value, passwordElement.value).then(success => {
-    if(success) dismissLogin()
-
-    showLoginError()
-    
-  })
+  return fetchToken(usernameElement.value, passwordElement.value).then(success => {
+    if(success) {
+      dismissLogin()
+      document.dispatchEvent(
+        new CustomEvent("auth:login-success")
+      )
+      return true
+    } else {
+      showLoginError()
+      return false
+    }
+  }).catch(_ => false)
 
 }
 

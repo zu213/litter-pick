@@ -8,6 +8,7 @@ from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 import json
 
 # to get a string like this run:
@@ -131,6 +132,14 @@ async def login_for_access_token(
     )
     return Token(access_token=access_token, token_type="bearer")
 
+@app.get("/token/validate", status_code=status.HTTP_204_NO_CONTENT)
+async def validate_token(
+    current_user: User = Depends(get_current_user),
+):
+    # If we get here, the token is valid.
+    # No body needed.
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+  
 # POST endpoint
 @app.post("/roads/")
 async def roads(coords: Optional[Coords] = None):
