@@ -1,4 +1,8 @@
-var userToken = localStorage.getItem('token')
+var userToken = localStorage.getItem('userToken')
+
+function presetToken() {
+  if (!userToken) userToken = localStorage.getItem('userToken')
+}
 
 export async function fetchToken(username, password) {
   const res = await fetch("http://localhost:8080/token", {
@@ -24,6 +28,8 @@ export async function fetchToken(username, password) {
 }
 
 export function validateToken(){
+  presetToken()
+  if (!userToken) return Promise.resolve(false)
   return fetch("http://localhost:8080/token/validate", {
     method: "GET",
     headers: {
@@ -39,8 +45,8 @@ export function validateToken(){
 export async function getUser() {
   if(!await validateToken()) return null
 
-  const res = await fetch("http://localhost:8080/token", {
-    method: "POST",
+  const res = await fetch("http://localhost:8080/user", {
+    method: "GET",
     headers: {
       "Authorization": `Bearer ${userToken}`,
       "Content-Type": "application/json",
@@ -48,7 +54,29 @@ export async function getUser() {
   })
 
   const user = await res.json()
-  console.log(user)
 
   return user 
+}
+
+export async function joinArea(areaId, userId) {
+   if(!await validateToken()) return false
+
+  const res = await fetch(`http://localhost:8080/roads/${areaId}`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${userToken}`,
+      "Content-Type": "application/json",
+    },
+    body: new URLSearchParams({
+      userId,
+    }),
+  })
+
+  const json = await res.json()
+
+  if(json) {
+    return json
+  } else {
+    return false
+  }
 }

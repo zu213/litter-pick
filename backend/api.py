@@ -140,7 +140,13 @@ async def validate_token(
     # No body needed.
     return Response(status_code=status.HTTP_204_NO_CONTENT)
   
-# POST endpoint
+@app.get("/user")
+async def fetch_user(
+    current_user: User = Depends(get_current_user),
+):
+  return current_user
+  
+# Get roads
 @app.post("/roads/")
 async def roads(coords: Optional[Coords] = None):
   # Get the roads for an area, this will be a database req with coords maybe
@@ -150,7 +156,7 @@ async def roads(coords: Optional[Coords] = None):
   return roadsJSON
 
 
-#
+# Volunteer for the road
 @app.post("/roads/$uuid")
 async def sign_up_for_road(
     current_user: Annotated[User, Depends(get_current_user)],
