@@ -69,7 +69,15 @@ function removeCardElement() {
 
 function volunteer() {
   getUser().then(user => {
-    console.log(currentFeature)
-    joinArea(currentFeature.id, user.username)
+    return joinArea(currentFeature.id, user.username)
+  }).then(response => {
+    if(response && response.users) {
+      updateVolunteers(response.users)
+    }
   })
+}
+
+function updateVolunteers(users) {
+  const usernames = users.map(users => users.username).join()
+  currentDetailedCardElement.querySelector('#area-volunteers').innerText = `Volunteers: ${usernames ?? 'No volunteers for area found'}`
 }

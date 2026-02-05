@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 import json
+from uuid import UUID
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -151,16 +152,27 @@ async def fetch_user(
 async def roads(coords: Optional[Coords] = None):
   # Get the roads for an area, this will be a database req with coords maybe
   
+  # this will be db get
   with open("roads.geojson", "r", encoding="utf-8") as f:
     roadsJSON = json.load(f)
   return roadsJSON
 
 
 # Volunteer for the road
-@app.post("/roads/$uuid")
+@app.post("/roads/{uuid}")
 async def sign_up_for_road(
-    current_user: Annotated[User, Depends(get_current_user)],
+  uuid: UUID,
+  current_user: Annotated[User, Depends(get_current_user)],
 ):
-  # sign current user up for road needs db
   print(current_user)
-  return {"item_id": uuid, "users": [current_user]}
+  
+  #db post
+  with open("roads.geojson", "r", encoding="utf-8") as f:
+    roadsJSON = json.load(f)
+  
+  # Edit the db with user is not reached
+  
+  return {
+    "road_id": uuid,
+    "users": [current_user],
+  }
