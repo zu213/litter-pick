@@ -11,6 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 import json
 from uuid import UUID
+from tortoise.contrib.fastapi import register_tortoise
+from models import Road, User
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -54,6 +56,13 @@ class Coords(BaseModel):
 password_hash = PasswordHash.recommended()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 app = FastAPI()
+
+register_tortoise(
+  app,
+  db_url="sqlite://db.sqlite3",
+  modules={"models": ["models"]},
+  generate_schemas=True,
+)
 
 def verify_password(plain_password, hashed_password):
   return password_hash.verify(plain_password, hashed_password)
@@ -151,6 +160,10 @@ async def fetch_user(
 @app.post("/roads/")
 async def roads(coords: Optional[Coords] = None):
   # Get the roads for an area, this will be a database req with coords maybe
+  
+  road = await Road.get(id=road_id)
+
+  await road.users.add(user)
   
   # this will be db get
   with open("roads.geojson", "r", encoding="utf-8") as f:
