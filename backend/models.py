@@ -13,6 +13,7 @@ class User(Model):
 
 class Road(Model):
   id = fields.IntField(pk=True)
+  details = fields.CharField(max_length=20000)
 
   users: fields.ManyToManyRelation[User] = fields.ManyToManyField(
     "models.User",
