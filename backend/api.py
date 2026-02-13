@@ -65,7 +65,7 @@ async def populate_db():
     for i in range(0, len(roadsJSON["features"]), batch_size):
       batch = roadsJSON["features"][i:i+batch_size]
 
-      tasks = [Road.create(details=feature) for feature in batch]
+      tasks = [Road.create(details=json.dumps(feature)) for feature in batch]
       await asyncio.gather(*tasks)
     
 @asynccontextmanager
@@ -184,12 +184,14 @@ async def roads(coords: Optional[Coords] = None):
   # Get the roads for an area, this will be a database req with coords maybe  
   roads = await Road.all()
   # we need to wrap this appropriately
+  print(roads[0].details)
+  features = [json.loads(road.details) for road in roads]
   
   geojson = {
     "type": "FeatureCollection",
     "name": "roads",
     "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-    "features": roads
+    "features": features
   }
 
   return geojson
