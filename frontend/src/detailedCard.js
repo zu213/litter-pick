@@ -24,7 +24,7 @@ export async function startAreaCardFlow(feature) {
   const button = document.createElement('button')
   button.className = 'detailed-card-button'
   validateToken().then(response => {
-    if(response.ok) {
+    if(response) {
       button.innerText = 'Volunteer'
       button.addEventListener('click', volunteer)
     } else {
@@ -47,7 +47,7 @@ function updateIfLoggedIn() {
   const volunteerButton = currentDetailedCardElement.querySelector('.detailed-card-button')
   volunteerButton.innerText = 'Volunteer'
   volunteerButton.removeEventListener('click', loginFlow)
-  volunteerButton.addEventListener('click', () => volunteer)
+  volunteerButton.addEventListener('click', volunteer)
   document.removeEventListener("auth:login-success", updateIfLoggedIn)
 }
 

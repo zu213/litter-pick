@@ -84,7 +84,6 @@ export async function registerUser(username, password) {
   })
 
   const user = await res.json()
-
   return user 
 }
 
@@ -124,4 +123,25 @@ export async function joinArea(areaId, userId) {
   } else {
     return false
   }
+}
+
+export async function getAreaJSON(coords) {
+  return (fetch('http://127.0.0.1:8080/roads/', {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer`,
+    },
+    body: JSON.stringify(
+      coords,
+    ),
+  })).then(response => {
+    if(response.ok) return response.json()
+  }).then(roadsJSON => {
+    roadsJSON['features'] = roadsJSON['features'].map((feature) => {
+      if(!feature['id']) feature['id'] = crypto.randomUUID()
+      return feature
+    })
+    return roadsJSON
+  }) 
 }

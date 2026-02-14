@@ -1,5 +1,6 @@
 import { startSidebarFlow } from "./sidebar.js"
-import { addRoadsToMap, getRoadJSON } from "./roads.js"
+import { addRoadsToMap } from "./roads.js"
+import { getAreaJSON } from "./util/bridge.js"
 
 const coords = {s: 51.748, w: -0.606, n: 51.780, e: -0.530}
 
@@ -26,7 +27,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map)
 
 
-const roadsJSON = await getRoadJSON(coords)
+const roadsJSON = await getAreaJSON(coords)
 const features = structuredClone(roadsJSON['features'])
 
 // KEEP PLEASE
