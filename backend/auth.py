@@ -7,8 +7,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
 
-from models import User
-from helper import TokenData
+from helper.models import User
+from helper.helper import TokenData
 
 # to get a string like this run:
 # openssl rand -hex 32

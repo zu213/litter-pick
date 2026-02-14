@@ -4,27 +4,6 @@ import { roadSelectedStyle, roadStyle, roadHoverStyle } from "./util/styles.js"
 const roadById = new Map()
 var selectedRoad = null
 
-export async function getRoadJSON(coords) {
-  return (fetch('http://127.0.0.1:8080/roads/', {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer`,
-    },
-    body: JSON.stringify(
-      coords,
-    ),
-  })).then(response => {
-    if(response.ok) return response.json()
-  }).then(roadsJSON => {
-    roadsJSON['features'] = roadsJSON['features'].map((feature) => {
-      if(!feature['id']) feature['id'] = crypto.randomUUID()
-      return feature
-    })
-    return roadsJSON
-  }) 
-}
-
 export function addRoadsToMap(roadsJSON, map) {
   // Add roads
   L.geoJSON(roadsJSON, {

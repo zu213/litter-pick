@@ -57,7 +57,10 @@ export function validateToken(){
 export async function getCurrentUser() {
   if(!await validateToken()) return null
 
-  const res = await fetch(`http://localhost:8080/user/${getCurrentUserId}`, {
+  const currentUser = getCurrentUserId()
+  if(!currentUser) return
+
+  const res = await fetch(`http://localhost:8080/user/${currentUser}`, {
     method: "GET",
     headers: {
       "Authorization": `Bearer ${userToken}`,
@@ -102,7 +105,7 @@ export async function getArea(id) {
 }
 
 
-export async function joinArea(areaId, userId) {
+export async function joinArea(areaId) {
    if(!await validateToken()) return false
 
   const res = await fetch(`http://localhost:8080/roads/${areaId}`, {
@@ -111,9 +114,6 @@ export async function joinArea(areaId, userId) {
       "Authorization": `Bearer ${userToken}`,
       "Content-Type": "application/json",
     },
-    body: new URLSearchParams({
-      userId,
-    }),
   })
 
   const json = await res.json()

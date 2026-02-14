@@ -28,7 +28,7 @@ app = FastAPI(lifespan=lifespan)
 register_tortoise(
   app,
   db_url="sqlite://db.sqlite3",
-  modules={"models": ["models"]},
+  modules={"models": ["helper.models"]},
   generate_schemas=True,
 )
   
@@ -117,10 +117,29 @@ async def roads(uuid: UUID):
 
 # Volunteer for the road
 @app.post("/roads/{uuid}")
-async def sign_up_for_road(uuid: UUID, current_user: Annotated[User, Depends(get_current_user)],):
+async def sign_up_for_road(uuid: UUID, user: Annotated[User, Depends(get_current_user)],):
   
+  road = await Road.filter(id=uuid).prefetch_related("users").get()
+  users = await road.users.all().values("id", "username")
   
+  if await road.users.filter(id=user.id).exists():
+    return {
+      "error": 1,
+      "error_message": "User already in list",
+      "users": users
+    }
+  
+  if len(users) > 9:
+    return {
+      "error": 2,
+      "error_message": "Road list at user limit",
+      "users": users
+    }
+  
+  await road.users.add(user)
+  users = await road.users.all()
+
   return {
-    "road_id": uuid,
-    "users": [current_user],
+    "error": 0,
+    "users": users
   }

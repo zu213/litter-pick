@@ -18,7 +18,8 @@ export async function startAreaCardFlow(feature) {
     cardBase.classList.add("is-open")
   })
 
-  cardBase.querySelector('#area-volunteers').innerText = `Volunteers: ${road['users'].length > 0  ? road['users'].length.join() : 'No volunteers for area found'}`
+  road['users'] = road['users'].map(user =>user.username)
+  cardBase.querySelector('#area-volunteers').innerText = `Volunteers: ${road['users'].length > 0  ? road['users'].join() : 'No volunteers for area found'}`
   cardBase.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
 
   const button = document.createElement('button')
@@ -70,11 +71,15 @@ function removeCardElement() {
 }
 
 function volunteer() {
-  getCurrentUser().then(user => {
-    return joinArea(currentFeature.id, user.id)
-  }).then(response => {
-    if(response && response.users) {
-      updateVolunteers(response.users)
+  // Don't need user id as backend can tell from token
+  joinArea(currentFeature.id).then(response => {
+    if(response) {
+      if(response.users){
+        updateVolunteers(response.users)
+      }
+      if(response.error) {
+        console.log(response.error_message)
+      }
     }
   })
 }
