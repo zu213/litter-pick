@@ -4,13 +4,13 @@ import uuid
 
 class User(Model):
   id = fields.UUIDField(pk=True, default=uuid.uuid4)
-  name = fields.CharField(max_length=100)
+  username = fields.CharField(max_length=100)
+  hashed_password = fields.CharField(max_length=100)
 
   roads: fields.ManyToManyRelation["Road"]
 
   def __str__(self):
-    return self.name
-
+    return self.username
 
 class Road(Model):
   id = fields.UUIDField(pk=True, default=uuid.uuid4)

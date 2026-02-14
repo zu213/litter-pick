@@ -32,7 +32,7 @@
   border-radius: 5px;
   margin: 15px;
 
-  .login-button {
+  .login-button, .register-button {
     text-align: center;
     padding: 10px;
     margin: 10px auto;
