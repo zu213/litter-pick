@@ -4,7 +4,7 @@ import uuid
 
 class User(Model):
   id = fields.UUIDField(pk=True, default=uuid.uuid4)
-  username = fields.CharField(max_length=100)
+  username = fields.CharField(max_length=100, unique=True)
   hashed_password = fields.CharField(max_length=100)
 
   roads: fields.ManyToManyRelation["Road"]

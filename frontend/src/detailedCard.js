@@ -1,5 +1,5 @@
 import { startLoginFlow } from "./login.js"
-import { joinArea, validateToken, getUser, getArea } from "./util/bridge.js"
+import { joinArea, validateToken, getCurrentUser, getArea } from "./util/bridge.js"
 
 var currentDetailedCardElement = null
 var currentFeature = null
@@ -23,8 +23,8 @@ export async function startAreaCardFlow(feature) {
 
   const button = document.createElement('button')
   button.className = 'detailed-card-button'
-  validateToken().then(loggedIn => {
-    if(loggedIn) {
+  validateToken().then(response => {
+    if(response.ok) {
       button.innerText = 'Volunteer'
       button.addEventListener('click', volunteer)
     } else {
@@ -70,8 +70,8 @@ function removeCardElement() {
 }
 
 function volunteer() {
-  getUser().then(user => {
-    return joinArea(currentFeature.id, user.username)
+  getCurrentUser().then(user => {
+    return joinArea(currentFeature.id, user.id)
   }).then(response => {
     if(response && response.users) {
       updateVolunteers(response.users)

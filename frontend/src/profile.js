@@ -1,6 +1,6 @@
-import { getUser, registerUser } from "./util/bridge.js"
+import { getCurrentUser, registerUser } from "./util/bridge.js"
 
-const user = await getUser()
+const user = await getCurrentUser()
 
 var currentLoginElement = null
 

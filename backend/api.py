@@ -21,23 +21,23 @@ from auth import get_current_user, authenticate_user, create_access_token, get_p
   
 # When we first make geojson we need to process it for out sqlite db
 async def populate_db():
-    with open("roads.geojson", "r", encoding="utf-8") as f:
-      roadsJSON = json.load(f)
+  with open("roads.geojson", "r", encoding="utf-8") as f:
+    roadsJSON = json.load(f)
 
-    batch_size = 50
+  batch_size = 50
 
-    for i in range(0, len(roadsJSON["features"]), batch_size):
-      batch = roadsJSON["features"][i:i+batch_size]
+  for i in range(0, len(roadsJSON["features"]), batch_size):
+    batch = roadsJSON["features"][i:i+batch_size]
 
-      tasks = [Road.create(details=json.dumps(feature)) for feature in batch]
-      await asyncio.gather(*tasks)
+    tasks = [Road.create(details=json.dumps(feature)) for feature in batch]
+    await asyncio.gather(*tasks)
     
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if await Road.all().count() == 0:
-      await populate_db()
-    
-    yield
+  if await Road.all().count() == 0:
+    await populate_db()
+  
+  yield
 
 app = FastAPI(lifespan=lifespan)
 
@@ -73,17 +73,21 @@ async def login_for_access_token(
     )
   access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
   access_token = create_access_token(
-      data={"sub": user.username}, expires_delta=access_token_expires
+      data={"sub": user.username, "id": str(user.id)}, expires_delta=access_token_expires
   )
   return Token(access_token=access_token, token_type="bearer")
 
-@app.get("/token/validate", status_code=status.HTTP_204_NO_CONTENT)
+@app.get("/token/validate")
 async def validate_token(
   current_user: User = Depends(get_current_user),
 ):
   # If we get here, the token is valid.
   # No body needed.
-  return Response(status_code=status.HTTP_204_NO_CONTENT)
+  print(current_user)
+  
+  return {
+    "id" :current_user.id
+  }
 
 # User
 @app.get("/user/")
@@ -92,9 +96,15 @@ async def fetch_user(
 ):
   return current_user
 
+@app.get("/user/${uuid}")
+async def get_user(
+  uuid: UUID,
+):
+  user = await User.filter(id=uuid).get() 
+  return user
+
 @app.post("/user/")
 async def create_user(user: UserCreate):
-  print(user)
   new_user = await User.create(username=user.username, hashed_password=get_password_hash(user.password))
 
   return {

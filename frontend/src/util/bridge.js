@@ -1,5 +1,11 @@
 var userToken = localStorage.getItem('userToken')
 
+var currentUserId = null
+
+export function getCurrentUserId() {
+  return currentUserId
+}
+
 function presetToken() {
   if (!userToken) userToken = localStorage.getItem('userToken')
 }
@@ -37,15 +43,20 @@ export function validateToken(){
       "Content-Type": "application/json",
     }
   }).then(res => {
-    if(res.ok) return true
+    if(res.ok){
+      return res.json().then(json => {
+        currentUserId = json.id
+        return true
+      })
+    }
     return false
   })
 }
 
-export async function getUser() {
+export async function getCurrentUser() {
   if(!await validateToken()) return null
 
-  const res = await fetch("http://localhost:8080/user/", {
+  const res = await fetch(`http://localhost:8080/user/${getCurrentUserId}`, {
     method: "GET",
     headers: {
       "Authorization": `Bearer ${userToken}`,
