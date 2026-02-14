@@ -1,36 +1,19 @@
+import json
+
 from datetime import timedelta
 from typing import Annotated, Optional
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response
 from contextlib import asynccontextmanager
-import json
-import asyncio
 from uuid import UUID
 from tortoise.contrib.fastapi import register_tortoise
 
-from models import Road, User
-from helper import Coords, Token
-from createModels import UserCreate
+from helper.models import Road, User
+from helper.helper import Coords, Token
+from helper.createModels import UserCreate
 from auth import get_current_user, authenticate_user, create_access_token, get_password_hash, ACCESS_TOKEN_EXPIRE_MINUTES
-
-# to get a string like this run:
-# openssl rand -hex 32
-  
-# When we first make geojson we need to process it for out sqlite db
-async def populate_db():
-  with open("roads.geojson", "r", encoding="utf-8") as f:
-    roadsJSON = json.load(f)
-
-  batch_size = 50
-
-  for i in range(0, len(roadsJSON["features"]), batch_size):
-    batch = roadsJSON["features"][i:i+batch_size]
-
-    tasks = [Road.create(details=json.dumps(feature)) for feature in batch]
-    await asyncio.gather(*tasks)
+from setup.setup import populate_db
     
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -39,6 +22,7 @@ async def lifespan(app: FastAPI):
   
   yield
 
+# Initial setup
 app = FastAPI(lifespan=lifespan)
 
 register_tortoise(
@@ -60,9 +44,7 @@ app.add_middleware(
 # Endpoints
 # Tokens
 @app.post("/token")
-async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-) -> Token:
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
   user = await authenticate_user(form_data.username, form_data.password)
   print(user)
   if not user:
@@ -78,28 +60,14 @@ async def login_for_access_token(
   return Token(access_token=access_token, token_type="bearer")
 
 @app.get("/token/validate")
-async def validate_token(
-  current_user: User = Depends(get_current_user),
-):
-  # If we get here, the token is valid.
-  # No body needed.
-  print(current_user)
-  
+async def validate_token(current_user: User = Depends(get_current_user)):  
   return {
     "id" :current_user.id
   }
 
 # User
-@app.get("/user/")
-async def fetch_user(
-  current_user: User = Depends(get_current_user),
-):
-  return current_user
-
 @app.get("/user/${uuid}")
-async def get_user(
-  uuid: UUID,
-):
+async def get_user(uuid: UUID):
   user = await User.filter(id=uuid).get() 
   return user
 
@@ -115,29 +83,25 @@ async def create_user(user: UserCreate):
 # Roads
 @app.post("/roads/")
 async def roads(coords: Optional[Coords] = None):
-    roads = await Road.all()
+  roads = await Road.all()
 
-    features = []
+  features = []
+  for road in roads:
+    feature = json.loads(road.details)
+    feature["id"] = str(road.id)
+    features.append(feature)
 
-    for road in roads:
-        feature = json.loads(road.details)
-
-        # Add DB id to feature
-        feature["id"] = str(road.id)
-
-        features.append(feature)
-
-    return {
-        "type": "FeatureCollection",
-        "name": "roads",
-        "crs": {
-            "type": "name",
-            "properties": {
-                "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
-            }
-        },
-        "features": features,
-    }
+  return {
+    "type": "FeatureCollection",
+    "name": "roads",
+    "crs": {
+      "type": "name",
+      "properties": {
+        "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+      }
+    },
+    "features": features,
+  }
 
 
 @app.get("/roads/{uuid}")
@@ -153,16 +117,8 @@ async def roads(uuid: UUID):
 
 # Volunteer for the road
 @app.post("/roads/{uuid}")
-async def sign_up_for_road(
-  uuid: UUID,
-  current_user: Annotated[User, Depends(get_current_user)],
-):
+async def sign_up_for_road(uuid: UUID, current_user: Annotated[User, Depends(get_current_user)],):
   
-  #db post
-  with open("roads.geojson", "r", encoding="utf-8") as f:
-    roadsJSON = json.load(f)
-  
-  # Edit the db with user is not reached
   
   return {
     "road_id": uuid,

@@ -33,6 +33,7 @@ export async function fetchToken(username, password) {
   
 }
 
+// Always updates current user id
 export function validateToken(){
   presetToken()
   if (!userToken) return Promise.resolve(false)
