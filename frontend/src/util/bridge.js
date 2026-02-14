@@ -58,6 +58,21 @@ export async function getUser() {
   return user 
 }
 
+export async function getArea(id) {
+  const res = await fetch(`http://localhost:8080/roads/${id}`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer`,
+      "Content-Type": "application/json",
+    }
+  })
+
+  const road = await res.json()
+
+  return road 
+}
+
+
 export async function joinArea(areaId, userId) {
    if(!await validateToken()) return false
 

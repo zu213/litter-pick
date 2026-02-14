@@ -181,21 +181,41 @@ async def fetch_user(
 # Get roads
 @app.post("/roads/")
 async def roads(coords: Optional[Coords] = None):
+    roads = await Road.all()
+
+    features = []
+
+    for road in roads:
+        feature = json.loads(road.details)
+
+        # Add DB id to feature
+        feature["id"] = str(road.id)
+
+        features.append(feature)
+
+    return {
+        "type": "FeatureCollection",
+        "name": "roads",
+        "crs": {
+            "type": "name",
+            "properties": {
+                "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+        },
+        "features": features,
+    }
+
+
+@app.get("/roads/{uuid}")
+async def roads(uuid: UUID):
   # Get the roads for an area, this will be a database req with coords maybe  
-  roads = await Road.all()
-  # we need to wrap this appropriately
-  print(roads[0].details)
-  features = [json.loads(road.details) for road in roads]
-  
-  geojson = {
-    "type": "FeatureCollection",
-    "name": "roads",
-    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-    "features": features
+  road = await Road.filter(id=uuid).prefetch_related("users").get()  # we need to wrap this appropriately
+  users = await road.users.all().values("id", "name")
+
+  return {
+    "details": json.loads(road.details),
+    "users": users
   }
-
-  return geojson
-
 
 # Volunteer for the road
 @app.post("/roads/{uuid}")
@@ -203,7 +223,6 @@ async def sign_up_for_road(
   uuid: UUID,
   current_user: Annotated[User, Depends(get_current_user)],
 ):
-  print(current_user)
   
   #db post
   with open("roads.geojson", "r", encoding="utf-8") as f:

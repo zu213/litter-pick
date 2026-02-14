@@ -1,10 +1,12 @@
 import { startLoginFlow } from "./login.js"
-import { joinArea, validateToken, getUser } from "./util/bridge.js"
+import { joinArea, validateToken, getUser, getArea } from "./util/bridge.js"
 
 var currentDetailedCardElement = null
 var currentFeature = null
 
-export function startAreaCardFlow(feature) {
+export async function startAreaCardFlow(feature) {
+
+  const road = await getArea(feature.id)
 
   currentFeature = feature
   const tpl = document.getElementById("detailed-card-template")
@@ -16,7 +18,7 @@ export function startAreaCardFlow(feature) {
     cardBase.classList.add("is-open")
   })
 
-  cardBase.querySelector('#area-volunteers').innerText = `Volunteers: ${feature['volunteers'] ?? 'No volunteers for area found'}`
+  cardBase.querySelector('#area-volunteers').innerText = `Volunteers: ${road['users'].length > 0  ? road['users'].length.join() : 'No volunteers for area found'}`
   cardBase.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
 
   const button = document.createElement('button')

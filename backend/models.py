@@ -1,8 +1,9 @@
 from tortoise import fields
 from tortoise.models import Model
+import uuid
 
 class User(Model):
-  id = fields.IntField(pk=True)
+  id = fields.UUIDField(pk=True, default=uuid.uuid4)
   name = fields.CharField(max_length=100)
 
   roads: fields.ManyToManyRelation["Road"]
@@ -12,7 +13,7 @@ class User(Model):
 
 
 class Road(Model):
-  id = fields.IntField(pk=True)
+  id = fields.UUIDField(pk=True, default=uuid.uuid4)
   details = fields.CharField(max_length=20000)
 
   users: fields.ManyToManyRelation[User] = fields.ManyToManyField(
