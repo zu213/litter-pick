@@ -143,3 +143,24 @@ async def sign_up_for_road(uuid: UUID, user: Annotated[User, Depends(get_current
     "error": 0,
     "users": users
   }
+  
+@app.post("/roads/{uuid}/leave")
+async def sign_up_for_road(uuid: UUID, user: Annotated[User, Depends(get_current_user)],):
+  
+  road = await Road.filter(id=uuid).prefetch_related("users").get()
+  users = await road.users.all()
+  
+  if await road.users.filter(id=user.id).exists():
+    await road.users.remove(user)
+    users = await road.users.all()
+    return {
+      "error": 0,
+      "users": users
+    }
+    
+  else:
+    return {
+      "error": 1,
+      "error_message": "User not in list",
+      "users": users
+    }

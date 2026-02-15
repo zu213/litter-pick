@@ -1,4 +1,4 @@
-import { fetchToken } from "./util/bridge.js"
+import { login } from "./util/helper.js"
 
 var loginElement = null
 
@@ -11,7 +11,7 @@ export function startLoginFlow() {
   loginEl.querySelector('.login-menu').addEventListener('click', (e) => e.stopPropagation())
 
   const loginButtonEl = loginEl.querySelector('.login-menu-button')
-  loginButtonEl.addEventListener('click', () => login())
+  loginButtonEl.addEventListener('click', processLogin)
 
   requestAnimationFrame(() => {
     loginEl.classList.add("is-open")
@@ -37,25 +37,10 @@ const dismissLogin = (e) => {
   )
 }
 
-const login = () => {
+const processLogin = () => {
   const usernameElement = loginElement.querySelector('.login-menu-username--input')
   const passwordElement = loginElement.querySelector('.login-menu-password--input')
-
-  if(!usernameElement.value || !passwordElement.value) return false
-
-  return fetchToken(usernameElement.value, passwordElement.value).then(success => {
-    if(success) {
-      dismissLogin()
-      document.dispatchEvent(
-        new CustomEvent("auth:login-success")
-      )
-      return true
-    } else {
-      showLoginError()
-      return false
-    }
-  }).catch(_ => false)
-
+  return login(usernameElement.value, passwordElement.value, dismissLogin, showLoginError)
 }
 
 const showLoginError = () => {

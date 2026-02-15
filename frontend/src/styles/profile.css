@@ -32,22 +32,28 @@
   border-radius: 5px;
   margin: 15px;
 
-  .login-button, .register-button {
-    text-align: center;
-    padding: 10px;
-    margin: 10px auto;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 10px;
-    min-width: 100px;
-
-    &:active {
-      transform: scale(0.97);
-    }
+  .button-holder {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   input {
     margin: 5px;
+  }
+}
+
+
+.login-button, .register-button, .logout-button {
+  text-align: center;
+  padding: 10px;
+  margin: 10px auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 10px;
+  min-width: 100px;
+
+  &:active {
+    transform: scale(0.97);
   }
 }
 

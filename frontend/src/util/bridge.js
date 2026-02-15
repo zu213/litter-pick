@@ -28,9 +28,14 @@ export async function fetchToken(username, password) {
 
   const json = await res.json()
   userToken = json['access_token']
+  await validateToken()
   localStorage.setItem('userToken', userToken)
   return true
-  
+}
+
+export function unsetToken() {
+  userToken = null
+  localStorage.removeItem('userToken')
 }
 
 // Always updates current user id
@@ -109,6 +114,26 @@ export async function joinArea(areaId) {
    if(!await validateToken()) return false
 
   const res = await fetch(`http://localhost:8080/roads/${areaId}`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${userToken}`,
+      "Content-Type": "application/json",
+    },
+  })
+
+  const json = await res.json()
+
+  if(json) {
+    return json
+  } else {
+    return false
+  }
+}
+
+export async function leaveArea(areaId) {
+   if(!await validateToken()) return false
+
+  const res = await fetch(`http://localhost:8080/roads/${areaId}/leave`, {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${userToken}`,
