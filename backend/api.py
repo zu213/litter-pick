@@ -46,7 +46,7 @@ app.add_middleware(
 @app.post("/token")
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
   user = await authenticate_user(form_data.username, form_data.password)
-  print(user)
+
   if not user:
     raise HTTPException(
       status_code=status.HTTP_401_UNAUTHORIZED,
@@ -66,10 +66,21 @@ async def validate_token(current_user: User = Depends(get_current_user)):
   }
 
 # User
-@app.get("/user/${uuid}")
+
+@app.get("/user/{uuid}")
 async def get_user(uuid: UUID):
-  user = await User.filter(id=uuid).get() 
-  return user
+  user = await User.get_or_none(id=uuid)
+
+  if not user:
+    raise HTTPException(status_code=404, detail="User not found")
+
+  roads = await user.roads.all().values("id", "details")
+
+  return {
+    "id": str(user.id),
+    "username": user.username,
+    "roads": roads
+  }
 
 @app.post("/user/")
 async def create_user(user: UserCreate):

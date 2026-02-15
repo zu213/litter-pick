@@ -19,12 +19,25 @@ function profilePage() {
 function startProfileFlow() {
   const tpl = document.getElementById("profile-template")
   const node = tpl.content.cloneNode(true)
-  const profileMenuElement = node.querySelector('.profile')
+  const profileMenuElement = node.querySelector('.profile-menu')
 
   profileMenuElement.querySelector('.logout-button').addEventListener('click', logout)
 
+  const usernameHolder = profileMenuElement.querySelector('.user-name')
+  usernameHolder.innerText = `Username: ${user.username}`
+
+  const roadDetailsHolder = profileMenuElement.querySelector('.user-areas')
+  roadDetailsHolder.innerHTML = `Roads: ${processRoadsToNames(user.roads)}`
+
   document.body.appendChild(profileMenuElement)
   currentProfileElement = profileMenuElement
+}
+
+function processRoadsToNames(unprocessed) {
+  return unprocessed.map(road => {
+    const parsed = JSON.parse(road.details)
+    return parsed['properties']['name'] ?? 'Unnamed area'
+  })
 }
 
 async function logout() {

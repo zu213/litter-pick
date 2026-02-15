@@ -22,7 +22,7 @@
   margin: 20px;
 }
 
-.profile-login-menu {
+.profile-login-menu, .profile-menu {
   left: 50%;
   transform: translate(-50%, 0);
   position: relative;
@@ -32,16 +32,36 @@
   border-radius: 5px;
   margin: 15px;
 
-  .button-holder {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
   input {
     margin: 5px;
   }
 }
 
+.profile-login-menu {
+  .button-holder {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.profile-menu {
+  .button-holder {
+    display: flex;
+
+    button {
+      align-self: center;
+    }
+  }
+}
+
+.profile-info {
+  margin: 10px;
+}
+
+.user-name, .user-areas {
+  margin: 10px;
+  text-align: center;
+}
 
 .login-button, .register-button, .logout-button {
   text-align: center;

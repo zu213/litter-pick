@@ -14,3 +14,5 @@ async def populate_db():
 
     tasks = [Road.create(details=json.dumps(feature)) for feature in batch]
     await asyncio.gather(*tasks)
+    
+  print("Database populated.")
