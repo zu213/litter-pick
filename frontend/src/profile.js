@@ -35,8 +35,8 @@ function startProfileFlow() {
 
 function processRoadsToNames(unprocessed) {
   return unprocessed.map(road => {
-    const parsed = JSON.parse(road.details)
-    return parsed['properties']['name'] ?? 'Unnamed area'
+    const parsedDetails = JSON.parse(road.details)
+    return `<span><a href="/frontend/public/index.html?road=${road['id']}">${parsedDetails['properties']['name'] ?? 'Unnamed area'}</a></span>`
   })
 }
 

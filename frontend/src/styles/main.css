@@ -42,6 +42,7 @@ h1 {
   margin: 10px 0;
   overflow: scroll;
   width: fit-content;
+  scroll-behavior: smooth;
 }
 
 .login-mask, .detailed-card-mask {
