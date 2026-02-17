@@ -27,6 +27,9 @@ export async function startSidebarFlow(features) {
 
   document.body.appendChild(cardHolderElement)
   sidebarElement = cardHolderElement
+
+  document.querySelector('.loading-spinner').classList.add('hidden')
+  document.querySelector('.map-container').classList.add('solid')
 }
 
 export function selectRoadCard(roadCardElement) {

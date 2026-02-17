@@ -83,6 +83,7 @@ h1 {
 
 .map-container {
   height: 90%;
+  opacity: 0;
   max-height: 500px;
   margin: 0;
   border: 2px solid rgb(212, 212, 212);
@@ -127,4 +128,36 @@ h1 {
     width: 100%;
     height: 100%;
   }
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #ffdf77;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  z-index: 1004;
+  position: absolute;
+  left: calc(50% - 24px);
+  top: 50%;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.solid {
+  opacity: 1;
 }
