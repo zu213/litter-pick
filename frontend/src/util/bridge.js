@@ -73,9 +73,18 @@ export async function getCurrentUser() {
     }
   })
 
-  const user = await res.json()
+  return await res.json()
+}
 
-  return user 
+export async function getUser(id) {
+  const res = await fetch(`http://localhost:8080/user/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  })
+
+  return await res.json()
 }
 
 export async function registerUser(username, password) {
@@ -91,8 +100,7 @@ export async function registerUser(username, password) {
     }),
   })
 
-  const user = await res.json()
-  return user 
+  return await res.json()
 }
 
 export async function getArea(id) {

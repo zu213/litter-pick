@@ -76,7 +76,6 @@ async function processLogin() {
 }
 
 async function switchToProfile() {
-  console.log('test', currentLoginElement)
   document.body.removeChild(currentLoginElement)
   currentLoginElement = null
   user = await getCurrentUser()
