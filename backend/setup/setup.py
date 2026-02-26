@@ -1,10 +1,14 @@
 import json
 import asyncio
 from helper.models import Road
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+file_path = BASE_DIR / "roads.geojson"
   
 # When we first make geojson we need to process it for out sqlite db
 async def populate_db():
-  with open("roads.geojson", "r", encoding="utf-8") as f:
+  with open(file_path, "r", encoding="utf-8") as f:
     roadsJSON = json.load(f)
 
   batch_size = 50

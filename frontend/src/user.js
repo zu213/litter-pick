@@ -27,6 +27,8 @@ async function startProfileFlow() {
 }
 
 function processRoadsToNames(unprocessed) {
+  if(!unprocessed) window.location.href = "/frontend/public/index.html"
+
   return unprocessed.map(road => {
     const parsedDetails = JSON.parse(road.details)
     return `<span><a href="/frontend/public/index.html?road=${road['id']}">${parsedDetails['properties']['name'] ?? 'Unnamed area'}</a></span>`

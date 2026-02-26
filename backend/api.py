@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from uuid import UUID
 from tortoise.contrib.fastapi import register_tortoise
+from datetime import datetime, timezone
 
 from helper.models import Road, User
 from helper.helper import Coords, Token
@@ -155,6 +156,7 @@ async def sign_up_for_road(uuid: UUID, user: Annotated[User, Depends(get_current
     "users": users
   }
   
+# Mark the road as litter picked
 @app.post("/roads/{uuid}/leave")
 async def sign_up_for_road(uuid: UUID, user: Annotated[User, Depends(get_current_user)],):
   
@@ -175,3 +177,23 @@ async def sign_up_for_road(uuid: UUID, user: Annotated[User, Depends(get_current
       "error_message": "User not in list",
       "users": users
     }
+
+@app.patch("/roads/{road_uuid}/picked")
+async def mark_road_as_picked(road_uuid: UUID, user: Annotated[User, Depends(get_current_user)]):
+  
+  road = await Road.filter(id=road_uuid).prefetch_related("users").get()
+  
+  if not (await road.users.filter(id=user.id).exists()):
+    return {
+      "error": 1,
+      "error_message": "User not in list",
+      "last_picked": road.last_picked
+    }
+
+  time = datetime.now(timezone.utc)
+  road.last_picked = time
+
+  return {
+    "error": 0,
+    "last_picked": time
+  }

@@ -15,6 +15,7 @@ class User(Model):
 class Road(Model):
   id = fields.UUIDField(pk=True, default=uuid.uuid4)
   details = fields.CharField(max_length=20000)
+  last_picked = fields.DatetimeField(null=True)
 
   users: fields.ManyToManyRelation[User] = fields.ManyToManyField(
     "models.User",
