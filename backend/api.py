@@ -85,6 +85,17 @@ async def get_user(uuid: UUID):
 
 @app.post("/user/")
 async def create_user(user: UserCreate):
+  if not user.username:
+    return {
+      "error": 1,
+      "error_message": "Invalid username",
+    }
+    
+  if await User.filter(username=user.username).exists():
+    return {
+      "error": 2,
+      "error_message": "User already exists",
+    }
   new_user = await User.create(username=user.username, hashed_password=get_password_hash(user.password))
 
   return {
@@ -121,9 +132,10 @@ async def roads(uuid: UUID):
   # Get the roads for an area, this will be a database req with coords maybe  
   road = await Road.filter(id=uuid).prefetch_related("users").get()  # we need to wrap this appropriately
   users = await road.users.all().values("id", "username")
-
+  print(road)
   return {
     "details": json.loads(road.details),
+    "last_picked": road.last_picked,
     "users": users
   }
 
@@ -192,6 +204,7 @@ async def mark_road_as_picked(road_uuid: UUID, user: Annotated[User, Depends(get
 
   time = datetime.now(timezone.utc)
   road.last_picked = time
+  await road.save()
 
   return {
     "error": 0,

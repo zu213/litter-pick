@@ -178,3 +178,24 @@ export async function getAreaJSON(coords) {
     return roadsJSON
   }) 
 }
+
+export async function markAsPicked(areaId){
+  if(!await validateToken()) return false
+
+  const res = await fetch(`http://localhost:8080/roads/${areaId}/picked`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": `Bearer ${userToken}`,
+      "Content-Type": "application/json",
+    },
+  })
+
+  const json = await res.json()
+
+  if(json) {
+    return json
+  } else {
+    return false
+  }
+
+}

@@ -1,8 +1,9 @@
 import { startLoginFlow } from "./login.js"
-import { joinArea, validateToken, getArea, getCurrentUserId, leaveArea } from "./util/bridge.js"
+import { joinArea, validateToken, getArea, getCurrentUserId, leaveArea, markAsPicked} from "./util/bridge.js"
 
 var currentDetailedCardElement = null
 var currentFeature = null
+var currentPickButton = null
 var currentUsersVolunteering = []
 
 export async function startAreaCardFlow(feature) {
@@ -18,6 +19,7 @@ export async function startAreaCardFlow(feature) {
   const node = tpl.content.cloneNode(true)
 
   const cardBase = node.querySelector('.detailed-card-mask')
+  currentDetailedCardElement = cardBase
 
   requestAnimationFrame(() => {
     cardBase.classList.add("is-open")
@@ -27,6 +29,7 @@ export async function startAreaCardFlow(feature) {
 
   cardBase.querySelector('#area-volunteers').innerHTML = `Volunteers: ${road['users'].length > 0  ? usernames.join() : 'No volunteers for area found'}`
   cardBase.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
+  updateLastPicked(road['last_picked'])
 
   const button = document.createElement('button')
   button.className = 'detailed-card-button'
@@ -51,8 +54,9 @@ export async function startAreaCardFlow(feature) {
 
     cardBase.addEventListener('click', () => removeCardElement())
 
+    if(button.innerText == 'Unvolunteer') addPickButton()
+
     document.body.appendChild(cardBase)
-    currentDetailedCardElement = cardBase
   })
 }
 
@@ -65,9 +69,11 @@ function updateCard() {
   if(currentUsersVolunteering.map(u => u.id).includes(getCurrentUserId())) {
     volunteerButton.innerText = 'Unvolunteer'
     volunteerButton.addEventListener('click', unvolunteer)
+    addPickButton()
   } else {
     volunteerButton.innerText = 'Volunteer'
     volunteerButton.addEventListener('click', volunteer)
+    removePickButton()
   }
 }
 
@@ -118,4 +124,41 @@ function updateVolunteers(users) {
   currentUsersVolunteering = users
   const usernames = currentUsersVolunteering.map(user => `<span><a href="/frontend/public/user.html?user=${user.id}">${user.username}</a></span>`).join()
   currentDetailedCardElement.querySelector('#area-volunteers').innerHTML = `Volunteers: ${users.length < 1 ? 'No volunteers for area found' : usernames}`
+}
+
+function addPickButton() {
+  if(!currentDetailedCardElement) return
+  const card = currentDetailedCardElement.querySelector('.detailed-card')
+
+  const button = document.createElement('button')
+  button.className = 'detailed-card-button'
+  button.innerText = 'Mark as picked'
+  button.addEventListener('click', pickRoad)
+
+  card.prepe
+  card.appendChild(button)
+  currentPickButton = button
+}
+
+async function pickRoad() {
+  const response = await markAsPicked(currentFeature.id)
+  if(!response) return
+
+  console.log(response)
+  updateLastPicked(response.last_picked)
+}
+
+function removePickButton() {
+  if(!currentPickButton || !currentDetailedCardElement) return
+  const card = currentDetailedCardElement.querySelector('.detailed-card')
+
+  card.removeChild(currentPickButton)
+  currentPickButton = null
+}
+
+function updateLastPicked(time) {
+  if(!currentDetailedCardElement) return
+  const lastPickedDiv = currentDetailedCardElement.querySelector('#area-last-picked')
+
+  lastPickedDiv.innerText = `Last picked: ${time ?? 'Never'}`
 }
