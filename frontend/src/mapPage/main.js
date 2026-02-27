@@ -1,6 +1,6 @@
 import { startSidebarFlow } from "./sidebar.js"
 import { addRoadsToMap } from "./roads.js"
-import { getAreaJSON } from "./util/bridge.js"
+import { getAreaJSON } from "../util/bridge.js"
 
 const coords = {s: 51.748, w: -0.606, n: 51.780, e: -0.530}
 

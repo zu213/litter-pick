@@ -1,5 +1,5 @@
 import { selectRoadCard } from "./sidebar.js"
-import { roadSelectedStyle, roadStyle, roadHoverStyle } from "./util/styles.js"
+import { roadSelectedStyle, roadStyle, roadHoverStyle } from "../util/styles.js"
 
 const roadById = new Map()
 var selectedRoad = null

@@ -1,4 +1,4 @@
-import { login } from "./util/helper.js"
+import { login } from "../util/helper.js"
 
 var loginElement = null
 

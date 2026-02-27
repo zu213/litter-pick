@@ -1,5 +1,5 @@
-import { getCurrentUser, registerUser, unsetToken } from "./util/bridge.js"
-import { login } from "./util/helper.js"
+import { getCurrentUser, registerUser, unsetToken } from "../util/bridge.js"
+import { login } from "../util/helper.js"
 
 var user = await getCurrentUser()
 

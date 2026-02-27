@@ -1,5 +1,5 @@
 import { startLoginFlow } from "./login.js"
-import { joinArea, validateToken, getArea, getCurrentUserId, leaveArea, markAsPicked} from "./util/bridge.js"
+import { joinArea, validateToken, getArea, getCurrentUserId, leaveArea, markAsPicked} from "../util/bridge.js"
 
 var currentDetailedCardElement = null
 var currentFeature = null
