@@ -112,6 +112,13 @@ h1 {
   }
 }
 
+.detailed-card {
+  .button-container.grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .profile-page-button {
   background-image: url("/frontend/public/imgs/profile.svg");
   background-repeat: no-repeat;

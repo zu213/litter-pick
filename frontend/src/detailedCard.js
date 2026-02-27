@@ -48,8 +48,9 @@ export async function startAreaCardFlow(feature) {
       button.addEventListener('click', startLoginFlow)
     }
 
+    const buttonContainer = cardBase.querySelector('.button-container')
+    buttonContainer.appendChild(button)
     const card = cardBase.querySelector('.detailed-card')
-    card.appendChild(button)
     card.addEventListener('click', (e) => e.stopPropagation())
 
     cardBase.addEventListener('click', () => removeCardElement())
@@ -128,15 +129,15 @@ function updateVolunteers(users) {
 
 function addPickButton() {
   if(!currentDetailedCardElement) return
-  const card = currentDetailedCardElement.querySelector('.detailed-card')
+  const buttonContainer = currentDetailedCardElement.querySelector('.button-container')
+  buttonContainer.classList.add('grid2')
 
   const button = document.createElement('button')
   button.className = 'detailed-card-button'
   button.innerText = 'Mark as picked'
   button.addEventListener('click', pickRoad)
 
-  card.prepe
-  card.appendChild(button)
+  buttonContainer.appendChild(button)
   currentPickButton = button
 }
 
@@ -150,9 +151,10 @@ async function pickRoad() {
 
 function removePickButton() {
   if(!currentPickButton || !currentDetailedCardElement) return
-  const card = currentDetailedCardElement.querySelector('.detailed-card')
+  const buttonContainer = currentDetailedCardElement.querySelector('.button-container')
+  buttonContainer.classList.remove('grid2')
 
-  card.removeChild(currentPickButton)
+  buttonContainer.removeChild(currentPickButton)
   currentPickButton = null
 }
 
@@ -160,5 +162,19 @@ function updateLastPicked(time) {
   if(!currentDetailedCardElement) return
   const lastPickedDiv = currentDetailedCardElement.querySelector('#area-last-picked')
 
-  lastPickedDiv.innerText = `Last picked: ${time ?? 'Never'}`
+  lastPickedDiv.innerText = `Last picked: ${formatDate(time)}`
+}
+
+function formatDate(isoString) {
+  if(!isoString) return 'Never'
+
+  const date = new Date(isoString)
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  const hours = String(date.getHours()).padStart(2, "0")
+  const minutes = String(date.getMinutes()).padStart(2, "0")
+
+  return `${year}-${month}-${day} ${hours}:${minutes}`
 }
