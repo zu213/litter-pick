@@ -1,163 +1,130 @@
-var userToken = localStorage.getItem('userToken')
-var currentUserId = null
+const API_BASE = "http://localhost:8080"
+
+let userToken = localStorage.getItem('userToken')
+let currentUserId = null
 
 
-async function wrapFetchRequest(url, obj) {
-  const response = await fetch(url, obj)
-
-  if(!response.ok) {
-    return false
+async function wrapFetchRequest(endpoint, options, auth, contentType="application/json") {
+  const headers = {
+    "Content-Type": contentType,
+    ...(options.headers || {})
   }
 
-  const json = await response.json()
-  return json
+  if (auth) {
+    if (!await validateToken()) return false
+    headers["Authorization"] = `Bearer ${userToken}`
+  }
+
+  const response = await fetch(`${API_BASE}${endpoint}`, {
+    ...options, headers
+  })
+  if(!response.ok) return false
+  return await response.json()
 }
 
+// Token handling
 export function getCurrentUserId() {
   return currentUserId
 }
 
-function presetToken() {
-  if (!userToken) userToken = localStorage.getItem('userToken')
-}
-
 export function unsetToken() {
   userToken = null
-  localStorage.removeItem('userToken')
+  currentUserId = null
+  localStorage.removeItem("userToken")
 }
 
 export async function fetchToken(username, password) {
-  const result = await wrapFetchRequest("http://localhost:8080/token", {
+  const result = await fetch(`${API_BASE}/token`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Type": "application/x-www-form-urlencoded"
     },
-    body: new URLSearchParams({
-      username,
-      password,
-    }),
+    body: new URLSearchParams({ username, password })
   })
 
-  if(!result) return false
-  localStorage.setItem('userToken', result['access_token'])
+  if (!result.ok) return false
+
+  const json = await result.json()
+  userToken = json.access_token
+  localStorage.setItem("userToken", userToken)
+
   await validateToken()
   return true
 }
 
-// Always updates current user id
-export function validateToken(){
-  presetToken()
-  if (!userToken) return Promise.resolve(false)
-  return wrapFetchRequest('http://localhost:8080/token/validate', {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${userToken}`,
-      "Content-Type": "application/json",
+export async function validateToken() {
+  if (!userToken) return false
+
+  try {
+    const response = await fetch(`${API_BASE}/token/validate`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${userToken}`,
+        "Content-Type": "application/json",
+      }
+    })
+
+    if (!response.ok) {
+      unsetToken()
+      return false
     }
-  }).then(json => {
-    if(!json) return false
+
+    const json = await response.json()
     currentUserId = json.id
     return true
-  })
+
+  } catch (err) {
+    unsetToken()
+    return false
+  }
+}
+
+// User requests
+export function getUser(id) {
+  return wrapFetchRequest(`/user/${id}`, { method: "GET" })
 }
 
 export async function getCurrentUser() {
-  const currentUser = getCurrentUserId()
-  if(!currentUser || !await validateToken()) return null
-
-  return wrapFetchRequest(`http://localhost:8080/user/${currentUser}`, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${userToken}`,
-      "Content-Type": "application/json",
-    }
-  })
+  if (!await validateToken()) return null
+  return wrapFetchRequest(`/user/${currentUserId}`, { method: "GET" }, true)
 }
 
-export async function getUser(id) {
-  return await wrapFetchRequest(`http://localhost:8080/user/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    }
-  })
-}
-
-export async function registerUser(username, password) {
-  return await wrapFetchRequest("http://localhost:8080/user/", {
+export function registerUser(username, password) {
+  return wrapFetchRequest("/user/", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      username,
-      password,
-    }),
+    body: JSON.stringify({ username, password })
   })
 }
 
-export async function getArea(id) {
-  return await wrapFetchRequest(`http://localhost:8080/roads/${id}`, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer`,
-      "Content-Type": "application/json",
-    }
-  })
+// Roads requests
+export function getArea(id) {
+  return wrapFetchRequest(`/roads/${id}`, { method: "GET" })
 }
 
-
-export async function joinArea(areaId) {
-   if(!await validateToken()) return false
-
-  return await wrapFetchRequest(`http://localhost:8080/roads/${areaId}`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${userToken}`,
-      "Content-Type": "application/json",
-    },
-  })
+export function joinArea(areaId) {
+  return wrapFetchRequest(`/roads/${areaId}`, { method: "POST" }, true)
 }
 
-export async function leaveArea(areaId) {
-   if(!await validateToken()) return false
+export function leaveArea(areaId) {
+  return wrapFetchRequest(`/roads/${areaId}/leave`, { method: "POST" }, true)
+}
 
-  return await wrapFetchRequest(`http://localhost:8080/roads/${areaId}/leave`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${userToken}`,
-      "Content-Type": "application/json",
-    },
-  })
+export function markAsPicked(areaId) {
+  return wrapFetchRequest(`/roads/${areaId}/picked`, { method: "PATCH" }, true)
 }
 
 export async function getAreaJSON(coords) {
-  return (wrapFetchRequest('http://127.0.0.1:8080/roads/', {
+  const roadsJSON = await wrapFetchRequest("/roads/", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer`,
-    },
-    body: JSON.stringify(
-      coords,
-    ),
-  })).then(roadsJSON => {
-    roadsJSON['features'] = roadsJSON['features'].map((feature) => {
-      if(!feature['id']) feature['id'] = crypto.randomUUID()
-      return feature
-    })
-    return roadsJSON
-  }) 
-}
-
-export async function markAsPicked(areaId){
-  if(!await validateToken()) return false
-
-  return await wrapFetchRequest(`http://localhost:8080/roads/${areaId}/picked`, {
-    method: "PATCH",
-    headers: {
-      "Authorization": `Bearer ${userToken}`,
-      "Content-Type": "application/json",
-    },
+    body: JSON.stringify(coords)
   })
+
+  if (!roadsJSON) return false
+
+  roadsJSON.features = roadsJSON.features.map(feature => {
+    if (!feature.id) feature.id = crypto.randomUUID()
+    return feature
+  })
+
+  return roadsJSON
 }
