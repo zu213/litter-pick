@@ -1,9 +1,9 @@
-import { login } from "../util/helper.js"
+import { login } from '../util/helper.js'
 
 var loginElement = null
 
 export function startLoginFlow() {
-  const tpl = document.getElementById("login-template")
+  const tpl = document.getElementById('login-template')
   const node = tpl.content.cloneNode(true)
 
   const loginEl = node.querySelector('.login-mask')
@@ -13,7 +13,7 @@ export function startLoginFlow() {
   const loginButtonEl = loginEl.querySelector('.login-menu-button')
   loginButtonEl.addEventListener('click', processLogin)
 
-  requestAnimationFrame(() => loginEl.classList.add("is-open"))
+  requestAnimationFrame(() => loginEl.classList.add('is-open'))
 
   document.body.appendChild(loginEl)
   loginElement = loginEl
@@ -23,9 +23,9 @@ const dismissLogin = (e) => {
   e?.stopPropagation()
   if(!loginElement) return
 
-  loginElement.classList.remove("is-open")
+  loginElement.classList.remove('is-open')
 
-  loginElement.addEventListener("transitionend", () => {
+  loginElement.addEventListener('transitionend', () => {
       document.body.removeChild(loginElement)
       loginElement = null
     },

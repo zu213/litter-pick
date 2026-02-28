@@ -1,5 +1,5 @@
-import { startLoginFlow } from "./login.js"
-import { joinArea, validateToken, getArea, getCurrentUserId, leaveArea, markAsPicked} from "../util/bridge.js"
+import { startLoginFlow } from './login.js'
+import { joinArea, validateToken, getArea, getCurrentUserId, leaveArea, markAsPicked} from '../util/bridge.js'
 
 var currentDetailedCardElement = null
 var currentFeature = null
@@ -8,8 +8,8 @@ var currentUsersVolunteering = []
 
 export async function startAreaCardFlow(feature) {
 
-  document.addEventListener("auth:logout-success", updateCard)
-  document.addEventListener("auth:login-success", updateCard)
+  document.addEventListener('auth:logout-success', updateCard)
+  document.addEventListener('auth:login-success', updateCard)
 
   const road = await getArea(feature.id)
   if(road.error) {
@@ -18,12 +18,12 @@ export async function startAreaCardFlow(feature) {
   currentUsersVolunteering = road['users']
 
   currentFeature = feature
-  const tpl = document.getElementById("detailed-card-template")
+  const tpl = document.getElementById('detailed-card-template')
   const node = tpl.content.cloneNode(true)
   const cardBase = node.querySelector('.detailed-card-mask')
   currentDetailedCardElement = cardBase
 
-  requestAnimationFrame(() => cardBase.classList.add("is-open"))
+  requestAnimationFrame(() => cardBase.classList.add('is-open'))
 
   const usernames = currentUsersVolunteering.map(user => `<span><a href="/frontend/public/user.html?user=${user.id}">${user.username}</a></span>`)
 
@@ -89,9 +89,9 @@ function updateCard() {
 }
 
 function removeCardElement() {
-  currentDetailedCardElement.classList.remove("is-open")
+  currentDetailedCardElement.classList.remove('is-open')
 
-  currentDetailedCardElement.addEventListener("transitionend", () => {
+  currentDetailedCardElement.addEventListener('transitionend', () => {
       if(currentDetailedCardElement) document.body.removeChild(currentDetailedCardElement)
       currentDetailedCardElement = null
     },
@@ -180,10 +180,10 @@ function formatDate(isoString) {
 
   const date = new Date(isoString)
   const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, "0")
-  const day = String(date.getDate()).padStart(2, "0")
-  const hours = String(date.getHours()).padStart(2, "0")
-  const minutes = String(date.getMinutes()).padStart(2, "0")
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
 
   return `${year}-${month}-${day} ${hours}:${minutes}`
 }

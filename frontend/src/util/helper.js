@@ -1,4 +1,4 @@
-import { fetchToken } from "./bridge.js"
+import { fetchToken } from './bridge.js'
 
 export function login(username, password, successAction, failAction) {
    if(!username) return false
@@ -7,7 +7,7 @@ export function login(username, password, successAction, failAction) {
     if(success.ok) {
       successAction()
       document.dispatchEvent(
-        new CustomEvent("auth:login-success")
+        new CustomEvent('auth:login-success')
       )
       return true
     } else {

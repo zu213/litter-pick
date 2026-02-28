@@ -1,4 +1,4 @@
-import { getUser } from "../util/bridge.js"
+import { getUser } from '../util/bridge.js'
 
 // Profile stuff
 async function startProfileFlow() {
@@ -7,7 +7,7 @@ async function startProfileFlow() {
   const userId = urlParams.get('user')
 
   if(!userId) {
-    window.location.href = "/frontend/public/index.html"
+    window.location.href = '/frontend/public/index.html'
     return
   }
 
@@ -16,7 +16,7 @@ async function startProfileFlow() {
     alert(user.error)
     return
   }
-  const tpl = document.getElementById("profile-template")
+  const tpl = document.getElementById('profile-template')
   const node = tpl.content.cloneNode(true)
   const profileMenuElement = node.querySelector('.profile-menu')
 
@@ -29,7 +29,9 @@ async function startProfileFlow() {
 }
 
 function processRoadsToNames(unprocessed) {
-  if(!unprocessed) window.location.href = "/frontend/public/index.html"
+  if(!unprocessed) window.location.href = '/frontend/public/index.html'
+
+  if(!Array.isArray(unprocessed) || unprocessed.length < 1) return 'None'
 
   return unprocessed.map(road => {
     const parsedDetails = JSON.parse(road.details)

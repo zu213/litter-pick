@@ -1,5 +1,5 @@
-import { getCurrentUser, registerUser, unsetToken } from "../util/bridge.js"
-import { login } from "../util/helper.js"
+import { getCurrentUser, registerUser, unsetToken } from '../util/bridge.js'
+import { login } from '../util/helper.js'
 
 var user = await getCurrentUser()
 if(user.error) {
@@ -20,7 +20,7 @@ function profilePage() {
 
 // Profile stuff
 function startProfileFlow() {
-  const tpl = document.getElementById("profile-template")
+  const tpl = document.getElementById('profile-template')
   const node = tpl.content.cloneNode(true)
   const profileMenuElement = node.querySelector('.profile-menu')
 
@@ -37,6 +37,8 @@ function startProfileFlow() {
 }
 
 function processRoadsToNames(unprocessed) {
+  if(!Array.isArray(unprocessed) || unprocessed.length < 1) return 'None'
+
   return unprocessed.map(road => {
     const parsedDetails = JSON.parse(road.details)
     return `<span><a href="/frontend/public/index.html?road=${road['id']}">${parsedDetails['properties']['name'] ?? 'Unnamed area'}</a></span>`
@@ -45,7 +47,7 @@ function processRoadsToNames(unprocessed) {
 
 async function logout() {
   user = null
-  document.dispatchEvent(new CustomEvent("auth:logout-success"))
+  document.dispatchEvent(new CustomEvent('auth:logout-success'))
   unsetToken()
   document.body.removeChild(currentProfileElement)
   currentProfileElement = null
@@ -54,7 +56,7 @@ async function logout() {
 
 // Login stuff
 function startProfileLoginFlow() {
-  const tpl = document.getElementById("login-form-template")
+  const tpl = document.getElementById('login-form-template')
   const node = tpl.content.cloneNode(true)
   const loginMenuElement = node.querySelector('.profile-login-menu')
 
