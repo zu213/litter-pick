@@ -14,12 +14,15 @@ async function wrapFetchRequest(endpoint, options, auth, contentType="applicatio
     if (!await validateToken()) return false
     headers["Authorization"] = `Bearer ${userToken}`
   }
-
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options, headers
-  })
-  if(!response.ok) return false
-  return await response.json()
+  try {
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options, headers
+    })
+    if(!response.ok) return false
+    return await response.json()
+  } catch (e) {
+    return { error: e, network: true }
+  }
 }
 
 // Token handling
@@ -34,26 +37,30 @@ export function unsetToken() {
 }
 
 export async function fetchToken(username, password) {
-  const result = await fetch(`${API_BASE}/token`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: new URLSearchParams({ username, password })
-  })
+  try {
+    const result = await fetch(`${API_BASE}/token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({ username, password })
+    })
 
-  if (!result.ok) return false
+    const json = await result.json()
+    if(!result.ok) return {ok: false, json}
 
-  const json = await result.json()
-  userToken = json.access_token
-  localStorage.setItem("userToken", userToken)
+    userToken = json.access_token
+    localStorage.setItem("userToken", userToken)
 
-  await validateToken()
-  return true
+    await validateToken()
+    return {ok: true, json}
+  } catch (e) {
+    return { error: e, network: true }
+  }
 }
 
 export async function validateToken() {
-  if (!userToken) return false
+  if (!userToken) return { error: 'No token found', network: true }
 
   try {
     const response = await fetch(`${API_BASE}/token/validate`, {
@@ -75,7 +82,7 @@ export async function validateToken() {
 
   } catch (err) {
     unsetToken()
-    return false
+    return { error: e, network: true }
   }
 }
 
@@ -85,7 +92,7 @@ export function getUser(id) {
 }
 
 export async function getCurrentUser() {
-  if (!await validateToken()) return null
+  if(!await validateToken()) return null
   return wrapFetchRequest(`/user/${currentUserId}`, { method: "GET" }, true)
 }
 
@@ -119,7 +126,7 @@ export async function getAreaJSON(coords) {
     body: JSON.stringify(coords)
   })
 
-  if (!roadsJSON) return false
+  if (roadsJSON.error) return roadsJSON
 
   roadsJSON.features = roadsJSON.features.map(feature => {
     if (!feature.id) feature.id = crypto.randomUUID()

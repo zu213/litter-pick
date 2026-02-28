@@ -12,6 +12,10 @@ async function startProfileFlow() {
   }
 
   const user = await getUser(userId)
+  if(user.error) {
+    alert(user.error)
+    return
+  }
   const tpl = document.getElementById("profile-template")
   const node = tpl.content.cloneNode(true)
   const profileMenuElement = node.querySelector('.profile-menu')

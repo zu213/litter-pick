@@ -2,6 +2,9 @@ import { getCurrentUser, registerUser, unsetToken } from "../util/bridge.js"
 import { login } from "../util/helper.js"
 
 var user = await getCurrentUser()
+if(user.error) {
+  alert(user.error)
+} 
 var currentLoginElement = null
 var currentProfileElement = null
 
@@ -70,13 +73,17 @@ async function processLogin() {
   const password = passwordInput.value
   passwordInput.value = ''
 
-  await login(username, password, switchToProfile, () => {})
+  await login(username, password, switchToProfile, (e) => {alert(e)})
 }
 
 async function switchToProfile() {
   document.body.removeChild(currentLoginElement)
   currentLoginElement = null
   user = await getCurrentUser()
+  if(user.error) {
+    alert(user.error)
+    return
+  }
   profilePage()
 }
 
@@ -88,5 +95,8 @@ async function register() {
   const password = passwordInput.value
   passwordInput.value = ''
 
-  await registerUser(username, password)
+  const res = await registerUser(username, password)
+  if(res.error) {
+    res.error_message ? alert(res.error_message) : alert(res.error)
+  }
 }

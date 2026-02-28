@@ -12,6 +12,9 @@ export async function startAreaCardFlow(feature) {
   document.addEventListener("auth:login-success", updateCard)
 
   const road = await getArea(feature.id)
+  if(road.error) {
+    alert(road.error)
+  }
   currentUsersVolunteering = road['users']
 
   currentFeature = feature
@@ -31,9 +34,14 @@ export async function startAreaCardFlow(feature) {
   const mainButton = document.createElement('button')
   mainButton.className = 'detailed-card-button'
   validateToken().then(response => {
-    if(response) {
+    if(!response.error) {
       const userIds = currentUsersVolunteering.map(user =>user.id)
-      if(userIds.includes(getCurrentUserId())){
+      const currentUser = getCurrentUserId()
+      if(currentUser?.error) {
+        alert(currentUser.error)
+        return
+      }
+      if(userIds.includes(currentUser)){
         mainButton.innerText = 'Unvolunteer'
         mainButton.addEventListener('click', unvolunteer)
       } else {
@@ -64,7 +72,12 @@ function updateCard() {
   volunteerButton.removeEventListener('click', volunteer)
   volunteerButton.removeEventListener('click', unvolunteer)
 
-  if(currentUsersVolunteering.map(u => u.id).includes(getCurrentUserId())) {
+  const currentUser = getCurrentUserId()
+  if(currentUser?.error) {
+    alert(currentUser.error)
+    return
+  }
+  if(currentUsersVolunteering.map(u => u.id).includes(currentUser)) {
     volunteerButton.innerText = 'Unvolunteer'
     volunteerButton.addEventListener('click', unvolunteer)
     addPickButton()
@@ -89,7 +102,7 @@ function removeCardElement() {
 function volunteer() {
   // Don't need user id as backend can tell from token
   joinArea(currentFeature.id).then(response => {
-    if(response) {
+    if(!response.error) {
       if(response.users){
         updateVolunteers(response.users)
         updateCard()
@@ -138,7 +151,10 @@ function addPickButton() {
 
 async function pickRoad() {
   const response = await markAsPicked(currentFeature.id)
-  if(!response) return
+  if(response?.error) {
+    alert(response.error)
+    return
+  }
 
   updateLastPicked(response.last_picked)
 }

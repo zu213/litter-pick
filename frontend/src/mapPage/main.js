@@ -27,10 +27,16 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map)
 
 const roadsJSON = await getAreaJSON(coords)
-const features = structuredClone(roadsJSON['features'])
 
-startSidebarFlow(features)
-addRoadsToMap(roadsJSON, map)
+if(roadsJSON.error) {
+  alert(`Error ${roadsJSON.error}, please refresh`)
+  document.querySelector('.loading-spinner').classList.add('hidden')
+} else {
+  const features = structuredClone(roadsJSON['features'])
+
+  startSidebarFlow(features)
+  addRoadsToMap(roadsJSON, map)
+}
 
 
 
