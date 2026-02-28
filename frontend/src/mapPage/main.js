@@ -2,7 +2,7 @@ import { startSidebarFlow } from "./sidebar.js"
 import { addRoadsToMap } from "./roads.js"
 import { getAreaJSON } from "../util/bridge.js"
 
-const coords = {s: 51.748, w: -0.606, n: 51.780, e: -0.530}
+const coords = {s: 51.748, w: -0.606, n: 51.780, e: -0.515}
 
 // Map bounds
 const bounds = L.latLngBounds(
@@ -26,16 +26,8 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map)
 
-
 const roadsJSON = await getAreaJSON(coords)
 const features = structuredClone(roadsJSON['features'])
-
-// KEEP PLEASE
-// Clean up any dirtying of json I perform - not needed for now
-// roadsJSON['features'] = roadsJSON['features'].map(feature => {
-//   delete feature['id']
-//   return feature
-// })
 
 startSidebarFlow(features)
 addRoadsToMap(roadsJSON, map)

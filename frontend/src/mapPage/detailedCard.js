@@ -17,13 +17,10 @@ export async function startAreaCardFlow(feature) {
   currentFeature = feature
   const tpl = document.getElementById("detailed-card-template")
   const node = tpl.content.cloneNode(true)
-
   const cardBase = node.querySelector('.detailed-card-mask')
   currentDetailedCardElement = cardBase
 
-  requestAnimationFrame(() => {
-    cardBase.classList.add("is-open")
-  })
+  requestAnimationFrame(() => cardBase.classList.add("is-open"))
 
   const usernames = currentUsersVolunteering.map(user => `<span><a href="/frontend/public/user.html?user=${user.id}">${user.username}</a></span>`)
 
@@ -31,31 +28,31 @@ export async function startAreaCardFlow(feature) {
   cardBase.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
   updateLastPicked(road['last_picked'])
 
-  const button = document.createElement('button')
-  button.className = 'detailed-card-button'
+  const mainButton = document.createElement('button')
+  mainButton.className = 'detailed-card-button'
   validateToken().then(response => {
     if(response) {
       const userIds = currentUsersVolunteering.map(user =>user.id)
       if(userIds.includes(getCurrentUserId())){
-        button.innerText = 'Unvolunteer'
-        button.addEventListener('click', unvolunteer)
+        mainButton.innerText = 'Unvolunteer'
+        mainButton.addEventListener('click', unvolunteer)
       } else {
-        button.innerText = 'Volunteer'
-        button.addEventListener('click', volunteer)
+        mainButton.innerText = 'Volunteer'
+        mainButton.addEventListener('click', volunteer)
       }
     } else {
-      button.innerText = 'Login to Volunteer'
-      button.addEventListener('click', startLoginFlow)
+      mainButton.innerText = 'Login to Volunteer'
+      mainButton.addEventListener('click', startLoginFlow)
     }
 
     const buttonContainer = cardBase.querySelector('.button-container')
-    buttonContainer.appendChild(button)
+    buttonContainer.appendChild(mainButton)
     const card = cardBase.querySelector('.detailed-card')
     card.addEventListener('click', (e) => e.stopPropagation())
 
     cardBase.addEventListener('click', () => removeCardElement())
 
-    if(button.innerText == 'Unvolunteer') addPickButton()
+    if(mainButton.innerText == 'Unvolunteer') addPickButton()
 
     document.body.appendChild(cardBase)
   })
@@ -81,9 +78,7 @@ function updateCard() {
 function removeCardElement() {
   currentDetailedCardElement.classList.remove("is-open")
 
-  currentDetailedCardElement.addEventListener(
-    "transitionend",
-    () => {
+  currentDetailedCardElement.addEventListener("transitionend", () => {
       if(currentDetailedCardElement) document.body.removeChild(currentDetailedCardElement)
       currentDetailedCardElement = null
     },
@@ -100,7 +95,7 @@ function volunteer() {
         updateCard()
       }
       if(response.error) {
-        console.log(response.error_message)
+        displayError(response.error_message)
       }
     }
   })
@@ -115,7 +110,7 @@ function unvolunteer() {
         updateCard()
       }
       if(response.error) {
-        console.log(response.error_message)
+        displayError(response.error_message)
       }
     }
   })
@@ -145,7 +140,6 @@ async function pickRoad() {
   const response = await markAsPicked(currentFeature.id)
   if(!response) return
 
-  console.log(response)
   updateLastPicked(response.last_picked)
 }
 
@@ -169,7 +163,6 @@ function formatDate(isoString) {
   if(!isoString) return 'Never'
 
   const date = new Date(isoString)
-
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, "0")
   const day = String(date.getDate()).padStart(2, "0")
@@ -177,4 +170,8 @@ function formatDate(isoString) {
   const minutes = String(date.getMinutes()).padStart(2, "0")
 
   return `${year}-${month}-${day} ${hours}:${minutes}`
+}
+
+function displayError(errorMessage) {
+  alert(`Error: ${errorMessage}`)
 }

@@ -2,9 +2,9 @@ import { getCurrentUser, registerUser, unsetToken } from "../util/bridge.js"
 import { login } from "../util/helper.js"
 
 var user = await getCurrentUser()
-
 var currentLoginElement = null
 var currentProfileElement = null
+
 profilePage()
 
 function profilePage() {
@@ -42,9 +42,7 @@ function processRoadsToNames(unprocessed) {
 
 async function logout() {
   user = null
-  document.dispatchEvent(
-    new CustomEvent("auth:logout-success")
-  )
+  document.dispatchEvent(new CustomEvent("auth:logout-success"))
   unsetToken()
   document.body.removeChild(currentProfileElement)
   currentProfileElement = null

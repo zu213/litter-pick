@@ -11,7 +11,7 @@ export function login(username, password, successAction, failAction) {
       )
       return true
     } else {
-      failAction()
+      failAction('Login failed')
       return false
     }
   }).catch(_ => false)

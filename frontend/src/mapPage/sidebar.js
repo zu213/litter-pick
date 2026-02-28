@@ -8,11 +8,9 @@ var introSelectElement = null
 export async function startSidebarFlow(features) {
   const tpl = document.getElementById("sidebar-template")
   const node = tpl.content.cloneNode(true)
-
   const cardHolderElement = node.getElementById('area-cards')
   
   for(const feature of features) {
-  
     const cardElement = document.createElement('div')
     cardElement.id = feature['id'] 
     cardElement.className = 'area-card'

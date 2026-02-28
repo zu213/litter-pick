@@ -10,23 +10,9 @@ export function addRoadsToMap(roadsJSON, map) {
     onEachFeature: (feature, layer) => {
       roadById.set(feature.id, layer)
 
-      layer.on('click', (e) => {
-        const roadCardElement = document.getElementById(feature['id'])
-        selectRoad(roadCardElement, e.target)
-
-      })
-
-      layer.on('mouseover', (e) => {
-        if(e.target != selectedRoad) {
-          e.target.setStyle(roadHoverStyle)
-        }
-      })
-
-      layer.on('mouseout', (e) => {
-        if(e.target != selectedRoad) {
-          e.target.setStyle(roadStyle)
-        }
-      })
+      layer.on('click', (e) => selectRoad(document.getElementById(feature['id']), e.target))
+      layer.on('mouseover', (e) => (e.target != selectedRoad) && e.target.setStyle(roadHoverStyle))
+      layer.on('mouseout', (e) => (e.target != selectedRoad) && e.target.setStyle(roadStyle))
     },
     style: roadStyle
   }).addTo(map)
@@ -41,7 +27,7 @@ export function selectRoadFromId(roadId) {
   selectedRoad = roadObj
 }
 
-const selectRoad = (roadCardElement, roadElement) => {
+function selectRoad(roadCardElement, roadElement) {
   selectRoadCard(roadCardElement)
   
   selectedRoad?.setStyle(roadStyle)

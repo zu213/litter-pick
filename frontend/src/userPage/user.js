@@ -1,4 +1,4 @@
-import { getUser } from "./util/bridge.js"
+import { getUser } from "../util/bridge.js"
 
 // Profile stuff
 async function startProfileFlow() {
@@ -12,14 +12,12 @@ async function startProfileFlow() {
   }
 
   const user = await getUser(userId)
-
   const tpl = document.getElementById("profile-template")
   const node = tpl.content.cloneNode(true)
   const profileMenuElement = node.querySelector('.profile-menu')
 
   const usernameHolder = profileMenuElement.querySelector('.user-name')
   usernameHolder.innerText = `Username: ${user.username}`
-
   const roadDetailsHolder = profileMenuElement.querySelector('.user-areas')
   roadDetailsHolder.innerHTML = `Roads: ${processRoadsToNames(user.roads)}`
 
