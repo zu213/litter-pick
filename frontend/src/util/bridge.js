@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8080'
+import { API_BASE } from './config.js'
 
 let userToken = localStorage.getItem('userToken')
 let currentUserId = null
@@ -15,6 +15,7 @@ async function wrapFetchRequest(endpoint, options, auth, contentType='applicatio
     headers['Authorization'] = `Bearer ${userToken}`
   }
   try {
+    console.log('Making request to', `${API_BASE}${endpoint}`, 'with options', options)
     const response = await fetch(`${API_BASE}${endpoint}`, {
       ...options, headers
     })
