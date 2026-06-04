@@ -1,4 +1,5 @@
 import json
+import os
 
 from datetime import timedelta
 from typing import Annotated, Optional
@@ -28,8 +29,27 @@ app = FastAPI(lifespan=lifespan)
 
 register_tortoise(
   app,
-  db_url="sqlite://db.sqlite3",
-  modules={"models": ["helper.models"]},
+  config={
+    "connections": {
+      "default": {
+        "engine": "tortoise.backends.asyncpg",
+        "credentials": {
+          "host": os.environ["DB_HOST"],
+          "port": os.environ.get("DB_PORT", 5432),
+          "user": os.environ["DB_USER"],
+          "password": os.environ["DB_PASSWORD"],
+          "database": os.environ["DB_NAME"],
+          "ssl": True,
+        }
+      }
+    },
+    "apps": {
+      "models": {
+        "models": ["helper.models"],
+        "default_connection": "default",
+      }
+    },
+  },
   generate_schemas=True,
 )
   
