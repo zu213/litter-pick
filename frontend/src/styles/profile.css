@@ -1,6 +1,6 @@
 
 .map-page-button {
-  background-image: url("/frontend/public/imgs/back.svg");
+  background-image: url("../../public/imgs/back.svg");
   background-repeat: no-repeat;
   background-size: cover;
   margin: 15px;

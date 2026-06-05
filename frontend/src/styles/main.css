@@ -120,7 +120,7 @@ h1 {
 }
 
 .profile-page-button {
-  background-image: url("/frontend/public/imgs/profile.svg");
+  background-image: url("../../public/imgs/profile.svg");
   background-repeat: no-repeat;
   background-size: cover;
   margin: 15px;

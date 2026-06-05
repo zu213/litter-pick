@@ -7,7 +7,7 @@ async function startProfileFlow() {
   const userId = urlParams.get('user')
 
   if(!userId) {
-    window.location.href = '/frontend/public/index.html'
+    window.location.href = './index.html'
     return
   }
 
@@ -29,13 +29,13 @@ async function startProfileFlow() {
 }
 
 function processRoadsToNames(unprocessed) {
-  if(!unprocessed) window.location.href = '/frontend/public/index.html'
+  if(!unprocessed) window.location.href = './index.html'
 
   if(!Array.isArray(unprocessed) || unprocessed.length < 1) return 'None'
 
   return unprocessed.map(road => {
     const parsedDetails = JSON.parse(road.details)
-    return `<span><a href="/frontend/public/index.html?road=${road['id']}">${parsedDetails['properties']['name'] ?? 'Unnamed area'}</a></span>`
+    return `<span><a href="./index.html?road=${road['id']}">${parsedDetails['properties']['name'] ?? 'Unnamed area'}</a></span>`
   })
 }
 

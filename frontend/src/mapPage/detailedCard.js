@@ -25,7 +25,7 @@ export async function startAreaCardFlow(feature) {
 
   requestAnimationFrame(() => cardBase.classList.add('is-open'))
 
-  const usernames = currentUsersVolunteering.map(user => `<span><a href="/frontend/public/user.html?user=${user.id}">${user.username}</a></span>`)
+  const usernames = currentUsersVolunteering.map(user => `<span><a href="./user.html?user=${user.id}">${user.username}</a></span>`)
 
   cardBase.querySelector('#area-volunteers').innerHTML = `Volunteers: ${road['users'].length > 0  ? usernames.join() : 'No volunteers for area found'}`
   cardBase.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
@@ -131,7 +131,7 @@ function unvolunteer() {
 
 function updateVolunteers(users) {
   currentUsersVolunteering = users
-  const usernames = currentUsersVolunteering.map(user => `<span><a href="/frontend/public/user.html?user=${user.id}">${user.username}</a></span>`).join()
+  const usernames = currentUsersVolunteering.map(user => `<span><a href="./user.html?user=${user.id}">${user.username}</a></span>`).join()
   currentDetailedCardElement.querySelector('#area-volunteers').innerHTML = `Volunteers: ${users.length < 1 ? 'No volunteers for area found' : usernames}`
 }
 
