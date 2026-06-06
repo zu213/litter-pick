@@ -7,6 +7,9 @@
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="../src/styles/main.css"/>
   </head>
   <body>
@@ -15,8 +18,13 @@
       <h1>Berko Litter Pick</h1>
       <div class="profile-page-button"><a href="./profile.html"></a></div>
     </div>
-    <div class="loading-spinner"></div>
-    <div class='map-container' id="map"></div>
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <span class="loading-text">Loading map...</span>
+    </div>
+    <div class="map-layout">
+      <div class='map-container' id="map"></div>
+    </div>
     <script type="module" src="../src/mapPage/main.js"></script>
   </body>
 

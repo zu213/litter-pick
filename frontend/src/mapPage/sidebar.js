@@ -24,10 +24,10 @@ export async function startSidebarFlow(features) {
     cardHolderElement.appendChild(cardElement)
   }
 
-  document.body.appendChild(cardHolderElement)
+  document.querySelector('.map-layout').appendChild(cardHolderElement)
   sidebarElement = cardHolderElement
 
-  document.querySelector('.loading-spinner').classList.add('hidden')
+  document.querySelector('.loading').classList.add('hidden')
   document.querySelector('.map-container').classList.add('solid')
 
   scrollAndShowCard()

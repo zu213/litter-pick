@@ -30,7 +30,7 @@ const roadsJSON = await getAreaJSON(coords)
 
 if(roadsJSON.error) {
   alert(`Error ${roadsJSON.error}, please refresh`)
-  document.querySelector('.loading-spinner').classList.add('hidden')
+  document.querySelector('.loading').classList.add('hidden')
 } else {
   const features = structuredClone(roadsJSON['features'])
 

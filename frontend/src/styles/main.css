@@ -1,5 +1,5 @@
 body, html {
-  font-family: Tahoma;
+  font-family: 'Inter', sans-serif;
   background-color: rgb(245, 245, 245);
 }
 
@@ -11,6 +11,10 @@ h1 {
   text-align: center;
   margin: 10px;
   font-weight: 550;
+}
+
+.title-bar {
+  margin: 25px;
 }
 
 .area-card {
@@ -31,17 +35,19 @@ h1 {
   border: 3px dashed rgb(58, 58, 58);
 }
 
+.map-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  height: calc(100vh - 100px);
+}
+
 .area-cards-holder {
-  position: absolute;
-  top: 62px;
-  right: 10px;
-  z-index: 1000;
+  flex-shrink: 0;
+  width: 300px;
+  border-radius: 5px;
   background-color: rgb(255, 255, 255);
-  max-width: 300px;
-  max-height: calc(90% - 30px);
-  margin: 10px 0;
-  overflow: scroll;
-  width: fit-content;
+  overflow-y: scroll;
   scroll-behavior: smooth;
 }
 
@@ -83,10 +89,9 @@ h1 {
 }
 
 .map-container {
-  height: 90%;
+  flex: 1;
   opacity: 0;
-  max-height: 500px;
-  margin: 0;
+  height: 100%;
   border: 2px solid rgb(212, 212, 212);
   border-radius: 5px;
 }
@@ -123,7 +128,7 @@ h1 {
   background-image: url("../../public/imgs/profile.svg");
   background-repeat: no-repeat;
   background-size: cover;
-  margin: 15px;
+  margin: 25px;
   width: 40px;
   aspect-ratio: 1;
   border-radius: 3px;
@@ -138,19 +143,35 @@ h1 {
   }
 }
 
-.loading-spinner {
-  width: 48px;
-  height: 48px;
-  border: 5px solid #ffdf77;
-  border-bottom-color: transparent;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
+.loading {
   z-index: 1004;
-  position: absolute;
-  left: calc(50% - 24px);
-  top: 50%;
+  position: fixed;
+  inset: 70px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background-color: rgb(245, 245, 245);
+}
+
+.loading-spinner {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  background: conic-gradient(from 0deg, transparent 0%, #ffdf77 100%);
+  animation: rotation 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #fff calc(100% - 5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #fff calc(100% - 5px));
+}
+
+.loading-text {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgb(120, 120, 120);
+  text-transform: uppercase;
 }
 
 @keyframes rotation {
