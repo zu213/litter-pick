@@ -1,24 +1,22 @@
-# Generate the empty road json for an area -> store it with no users attached
-# Basically just a programmatic way to setup roads initially.
-
+import sys
 import requests
 import geopandas as gpd
 from shapely.geometry import LineString
 
 
-def generateRoadJson(coords):
+def generateRoadJson(coords, output='roads.geojson'):
     query = """
     [out:json][timeout:25];
     (
     way["highway"]
         ["highway"!~"service|track|path|footway|cycleway|bridleway|steps"]
         ["access"!="private"]
-        
+
         {coordinates};
     );
     out body geom;
     """.format(coordinates=coords)
-    
+
     r = requests.post(
         "https://overpass-api.de/api/interpreter",
         data=query,
@@ -27,7 +25,6 @@ def generateRoadJson(coords):
         }
     )
 
-    # ---- DEBUG SAFETY CHECK ----
     if r.status_code != 200:
         raise RuntimeError(f"HTTP {r.status_code}: {r.text}")
 
@@ -41,10 +38,10 @@ def generateRoadJson(coords):
     names = []
 
     for el in data["elements"]:
-        coords = [(p["lon"], p["lat"]) for p in el["geometry"]]
-        lines.append(LineString(coords))
+        coords_pts = [(p["lon"], p["lat"]) for p in el["geometry"]]
+        lines.append(LineString(coords_pts))
         highways.append(el["tags"].get("highway", "road"))
-        names.append(el["tags"].get("name")) 
+        names.append(el["tags"].get("name"))
 
     gdf = gpd.GeoDataFrame(
         {
@@ -55,8 +52,6 @@ def generateRoadJson(coords):
         crs="EPSG:4326"
     )
 
-
-    # Convert to meters
     gdf = gdf.to_crs(epsg=3857)
 
     widths = {
@@ -74,12 +69,18 @@ def generateRoadJson(coords):
         axis=1
     )
 
-    # Back to lat/lon
     gdf = gdf.to_crs(epsg=4326)
+    gdf.to_file(output, driver="GeoJSON")
+    print(f"Saved {len(gdf)} roads to {output}")
 
-    gdf.to_file("roads.geojson", driver="GeoJSON")
 
+if __name__ == "__main__":
+    if len(sys.argv) < 5:
+        print("Usage: python generateRoads.py <south> <west> <north> <east> [output.geojson]")
+        sys.exit(1)
 
-bCoords = '(51.748,-0.606,51.780,-0.53)' 
+    s, w, n, e = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+    output = sys.argv[5] if len(sys.argv) > 5 else "roads.geojson"
 
-generateRoadJson(bCoords)
+    coords = f"({s},{w},{n},{e})"
+    generateRoadJson(coords, output)
