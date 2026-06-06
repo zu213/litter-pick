@@ -1,6 +1,6 @@
 import { API_BASE } from './config.js'
 
-let userToken = localStorage.getItem('userToken')
+export let userToken = localStorage.getItem('userToken')
 let currentUserId = null
 
 

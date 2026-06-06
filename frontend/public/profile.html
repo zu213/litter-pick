@@ -17,8 +17,20 @@
 
   <template id="login-form-template">
     <div class="profile-login-menu">
-      <div class="username-input"><div>Username:</div><input id="username-input" /></div>
-      <div class="password-input"><div>Password:</div><input id="password-input" /></div>
+      <div class="profile-login-header">
+        <div class="profile-login-title">Sign in</div>
+        <div class="profile-login-subtitle">or register a new account</div>
+      </div>
+      <div class="profile-login-fields">
+        <div class="login-field">
+          <label class="login-label" for="username-input">Username</label>
+          <input class="login-input" id="username-input" autocomplete="username" />
+        </div>
+        <div class="login-field">
+          <label class="login-label" for="password-input">Password</label>
+          <input class="login-input" id="password-input" type="password" autocomplete="current-password" />
+        </div>
+      </div>
       <div class="button-holder">
         <button class="login-button">Login</button>
         <button class="register-button">Register</button>

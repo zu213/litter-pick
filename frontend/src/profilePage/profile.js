@@ -1,12 +1,14 @@
-import { getCurrentUser, registerUser, unsetToken } from '../util/bridge.js'
+import { getCurrentUser, registerUser, unsetToken, userToken } from '../util/bridge.js'
 import { login } from '../util/helper.js'
 
-var user = await getCurrentUser()
-if(user.error) {
-  alert(user.error)
-} 
+var user = null
 var currentLoginElement = null
 var currentProfileElement = null
+
+if (userToken) {
+  user = await getCurrentUser()
+  if (user?.error) alert(user.error)
+}
 
 profilePage()
 

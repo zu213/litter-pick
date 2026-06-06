@@ -13,6 +13,14 @@ export function startLoginFlow() {
   const loginButtonEl = loginEl.querySelector('.login-menu-button')
   loginButtonEl.addEventListener('click', processLogin)
 
+  loginEl.querySelectorAll('.login-input').forEach(input => {
+    input.addEventListener('input', () => {
+      const errorEl = loginElement.querySelector('.login-error')
+      errorEl.textContent = ''
+      errorEl.classList.remove('visible')
+    })
+  })
+
   requestAnimationFrame(() => loginEl.classList.add('is-open'))
 
   document.body.appendChild(loginEl)
@@ -40,5 +48,7 @@ const processLogin = () => {
 }
 
 function showLoginError(errorMessage) {
-  alert(`Error: ${errorMessage}`)
+  const errorEl = loginElement.querySelector('.login-error')
+  errorEl.textContent = errorMessage
+  errorEl.classList.add('visible')
 }

@@ -6,16 +6,10 @@ var currentFeature = null
 var currentPickButton = null
 var currentUsersVolunteering = []
 
-export async function startAreaCardFlow(feature) {
+export async function startAreaCardFlow(feature, cardElement) {
 
   document.addEventListener('auth:logout-success', updateCard)
   document.addEventListener('auth:login-success', updateCard)
-
-  const road = await getArea(feature.id)
-  if(road.error) {
-    alert(road.error)
-  }
-  currentUsersVolunteering = road['users']
 
   currentFeature = feature
   const tpl = document.getElementById('detailed-card-template')
@@ -23,47 +17,54 @@ export async function startAreaCardFlow(feature) {
   const cardBase = node.querySelector('.detailed-card-mask')
   currentDetailedCardElement = cardBase
 
+  const card = cardBase.querySelector('.detailed-card')
+  card.addEventListener('click', (e) => e.stopPropagation())
+  cardBase.addEventListener('click', () => removeCardElement())
+
+  document.body.appendChild(cardBase)
   requestAnimationFrame(() => cardBase.classList.add('is-open'))
 
-  const usernames = currentUsersVolunteering.map(user => `<span><a href="./user.html?user=${user.id}">${user.username}</a></span>`)
+  const road = await getArea(feature.id)
+  if(road.error) {
+    alert(road.error)
+    return
+  }
+  currentUsersVolunteering = road['users']
 
-  cardBase.querySelector('#area-volunteers').innerHTML = `Volunteers: ${road['users'].length > 0  ? usernames.join() : 'No volunteers for area found'}`
+  const usernames = currentUsersVolunteering.map(user => `<span><a href="./user.html?user=${user.id}">${user.username}</a></span>`)
+  cardBase.querySelector('#area-volunteers').innerHTML = `Volunteers: ${road['users'].length > 0 ? usernames.join() : 'No volunteers for area found'}`
   cardBase.querySelector('#area-title').innerText = `Area: ${feature['properties']['name'] ?? `Unnamed area`}`
   updateLastPicked(road['last_picked'])
 
   const mainButton = document.createElement('button')
   mainButton.className = 'detailed-card-button'
-  validateToken().then(response => {
-    if(!response.error) {
-      const userIds = currentUsersVolunteering.map(user =>user.id)
-      const currentUser = getCurrentUserId()
-      if(currentUser?.error) {
-        alert(currentUser.error)
-        return
-      }
-      if(userIds.includes(currentUser)){
-        mainButton.innerText = 'Unvolunteer'
-        mainButton.addEventListener('click', unvolunteer)
-      } else {
-        mainButton.innerText = 'Volunteer'
-        mainButton.addEventListener('click', volunteer)
-      }
-    } else {
-      mainButton.innerText = 'Login to Volunteer'
-      mainButton.addEventListener('click', startLoginFlow)
+  const tokenResponse = await validateToken()
+  if(!tokenResponse.error) {
+    const userIds = currentUsersVolunteering.map(user => user.id)
+    const currentUser = getCurrentUserId()
+    if(currentUser?.error) {
+      alert(currentUser.error)
+      return
     }
+    if(userIds.includes(currentUser)){
+      mainButton.innerText = 'Unvolunteer'
+      mainButton.addEventListener('click', unvolunteer)
+    } else {
+      mainButton.innerText = 'Volunteer'
+      mainButton.addEventListener('click', volunteer)
+    }
+  } else {
+    mainButton.innerText = 'Login to Volunteer'
+    mainButton.addEventListener('click', startLoginFlow)
+  }
 
-    const buttonContainer = cardBase.querySelector('.button-container')
-    buttonContainer.appendChild(mainButton)
-    const card = cardBase.querySelector('.detailed-card')
-    card.addEventListener('click', (e) => e.stopPropagation())
+  const buttonContainer = cardBase.querySelector('.button-container')
+  buttonContainer.appendChild(mainButton)
 
-    cardBase.addEventListener('click', () => removeCardElement())
+  if(mainButton.innerText == 'Unvolunteer') addPickButton()
 
-    if(mainButton.innerText == 'Unvolunteer') addPickButton()
-
-    document.body.appendChild(cardBase)
-  })
+  cardBase.querySelector('.detailed-card-loading').style.display = 'none'
+  cardBase.querySelector('.detailed-card-content').style.display = 'block'
 }
 
 function updateCard() {
